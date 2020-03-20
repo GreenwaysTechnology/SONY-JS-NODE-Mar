@@ -1,0 +1,876 @@
+Javascript:
+
+Lab Setup:
+
+1.node js
+2.vs code
+//////////////////////////////////////////////////////////////////////////
+
+What is Java script?
+
+Javascript is one of the Programming langugage.
+
+C++/Java is Object Oriented Programming Language.
+
+Programming paradigms
+
+1.Procedural
+2.OO
+3.Functional 
+4.Event driven
+5.Rule based
+6.Constrain oriented
+etc........
+
+Languages are reference implementation of those paradgims.
+
+Pure and style/based PL:
+...................
+
+if any language follows one programming paradigm principle 100% which is called Pure
+eg: C++ is pure object oriented Programming.
+
+if any language mixes  many programming paradigm principle or here and there which is called 
+Style /based
+
+eg:javascript mixes many paradgims.
+
+
+      "javascript is Object based , functional , event driven Programming language"
+
+...........................................................................................
+
+Java is pure oo?
+
+ From java 8 , java is Object oriented, functional style programming.
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Typing: Data types:
+..................
+
+1.Strongly/static typed pl
+  
+  Type of variable is verified during compile time. if type mismatch, compiler throw error.
+eg:
+  c,c++,java.......
+
+2.Weakly/dynamic typed pl
+
+Type of variable is identified during run time. if type mismatch, runtime throw error.
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+                      "javascript is dynamic typed pl"
+.........................................................................................
+History Of javascript:
+
+javascript was created at "Netscap Communication" in 1995.
+
+javascript was created for web computing :  to process HTML Pages dynamically at browser.
+
+javascript was created by "Brendan Eich"
+
+Time line:
+
+1.javascript project started 1995
+
+1.first name of the language was "Mocha"
+2.language was renamed to "Live Script" -1996
+3.language was renamed to "java Script" -1996
+
+After language ready, which was submitted to standard body "ECMA international"
+
+
+1996---1997 : JS 1.0 =>ES 1.0
+
+1997- 1998 :  ES 2.0: It did not come
+
+1999 :  ES 3
+
+2007 : ES 4
+
+2008 : ES 5
+
+2012-2015 : ES 6
+
+2016  ONWARDS : es 7,es 8, ......
+...........................................................................................
+
+Compilation,Execution, Runtime:
+...............................
+
+Javascript has no independant compiler like c++/java.
+
+Runtime: 
+
+ It is program, written in c / c++ , any language.
+ Runtime is abstraction/communication layer between os and application programms.
+
+Types of runtime:
+
+1.embeded runtime
+  embeded into another software
+ eg:
+   embeded game engines...
+   browsers has lot of embbeded 
+
+   webservers which running java code : tomcat
+
+2.standalone runtime
+  which is avaiable separatly
+  JVM
+
+
+Javascript runtime:
+...................
+ it is avaiable in both mode.
+
+Embeded mode:
+  js runtime is avaiable inside every browser.
+
+chrome : V8 
+firefox : Spider Monkey
+ms : Chakara.
+
+standalone mode:
+  node js, which has standalone js runtime.
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Does javascript code is compiled?
+
+ Yes! , inside javascript runtime, which has embbeded compiler.
+////////////////////////////////////////////////////////////////////////////////////////////
+
+We are going to use v8:
+  "V8 is Google’s open source high-performance JavaScript and WebAssembly engine, written in C++. 
+It is used in Chrome and in Node.js, 
+////////////////////////////////////////////////////////////////////////////////////////////
+Where is javascript ? what type of applications we can build using javascript?
+
+1.javascript was created for browser only to process web documents.
+
+Now a days  javascript is used every where.
+
+1. javascript is in server side market : for build Webapps,webservices :Node.js
+2. javascript is in mobility  : build mobile applications
+3. javascript is in IOT : build any device specific applications.
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Java Script Programming language: ES 5 AND ES 6
+...............................................
+
+1.language fundamentals
+2.functional programming
+3.Object based programming
+4.Browser specific features
+   DOM,AJAX.
+
+Node Js:
+   Build Nonblocking IO applications 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+1.language fundamentals
+
+types,variables, values : literals
+
+JS dynamic typed language : no type system.
+
+Declare variable
+
+ var | let | const | this  variableName = value(literals).
+
+literals : values based on it only the type of variable is identified during runtime.
+
+literals types:
+
+1.string
+2.number
+3.boolean
+4.undefined
+5.NaN
+6.infinity
+7.function
+8.null
+9.object
+
+ var : is used in es 5
+ let and const is used in es 6
+ this : both version
+
+
+Note: 
+1.var,let,const all are same only but there are few differences, to be disucssed latter.
+ var vs let and const.
+
+2.In js ; is optional 
+
+
+Point:
+
+  if you are building javascript application based on es 6, recommandation is use "let and
+const" always.
+
+
+1.strings:
+
+1.16 bit unicode charaters.
+
+2.strings can be declared inside  "" or ''  or ``(back-tick) es 6 feature
+   "" : inspired from java and c++
+   '' : js specific notation.
+  
+3.string concatnation can be done
+   +  and , and `foo ${variableName}`
+
+
+
+/**
+ * strings
+ */
+
+//es 5 syntax only for few examples 
+
+var firstName = "Subramanian";
+var lastName = 'Murugan'
+//print
+console.log("Full Name " + firstName + lastName);
+console.log("Full Name", firstName, lastName);
+//es6 string 
+console.log(`Full Name ${firstName} ${lastName}`)
+let city = 'Coimbatore';
+//back tick notation use case : for string concatation : template literal
+console.log(`City ${city}`)
+//back tick notation use case : for multi line string literal
+//es 5 multi line strings
+let title = 'Sony'
+let htmlDoc = "<html>" +
+    "<head><title>" +
+    title +
+    "</title>" +
+    "</head>" +
+    "<body><h1>Sony Digital</h1>" +
+    "</body></html>";
+
+console.log(htmlDoc);
+//es 6 multi line strings
+let htmlnewDoc = `<html>
+    <head>
+    <title>${title}</title>
+    </head>
+    <body><h1>Sony Digital</h1>
+    </body></html>`;
+console.log(htmlnewDoc);
+/////////////////////////////////////////////////////////////////////////////////////////
+Numbers:
+
+1.number size is 64 bit by default aka double.
+2.It is IEEE 754 Standard.
+
+
+//numbers
+//numbers
+let price = 10;
+let qty = 100;
+//numerical compuation
+let totalPrice  =  price * qty;
+let avgPrice = totalPrice / 2;
+
+console.log(`Price is ${price} and qty is ${qty}`);
+console.log(`Total Price ${totalPrice}`)
+console.log(`Avg Price ${avgPrice}`)
+
+operators: numerical operations
+Note : all operators from c/c++/java is available in javascript
+ 
+
+undefined:
+..........
+It is value, assigned to a variable, if no valid literal is assigned.
+
+let firstName;
+let price;
+let qty;
+console.log(`First Name ${firstName}`);
+console.log(`price ${price} ${qty}`);
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+Related to Numbers:
+
+1.NaN :Not a Number 
+
+Not a Number but is number.
+NaN is error code.
+NaN error code will come due to numerical compuation failures.
+
+Note:
+
+ if you get NaN as out put, it is danger/toxic , it is runtime error, you need to fix.
+
+When NaN will come?
+ 
+//NaN use case 1; if you do numerical compuation against undefined
+
+let price =100; //number
+let qty; // undefined
+let totalPrice  = price * qty; // number * undefined
+console.log(`total price ${totalPrice}`);
+
+Type conversion : string to number
+
+types of Type conversion
+
+1.implicit Type conversion
+ js automatically converts string to number
+2.explicit Type conversion
+ js uses conversion utility apis to convert string to number.
+
+
+
+//NaN use case 1; if you do numerical compuation against undefined
+
+let price = 100; //number
+let qty; // undefined
+let totalPrice = price * qty; // number * undefined
+console.log(`total price ${totalPrice}`);
+
+//Type conversion : implicit
+let x = "10";//type is string but value is number
+let y = 10;
+let totalValue = x * y; // x value is converted into number first and then computation starts
+console.log(`Total Value ${totalValue}`)
+
+//Type convserion : explicity Using parse Utilty
+let a = "10";
+let b = 90;
+let totalA = parseFloat(a) + b;
+console.log(`Parse Functions ${totalA}`);
+
+//Use case 2:NaN during type conversion
+let stockValue = "$10"; 
+//let totalStock = stockValue * 10; // stockvalue is converted from string to number but special character will cause nan
+let totalStock = parseInt(stockValue) * 10;
+console.log(`Type conversion Error ${totalStock}`);
+
+
+2.infinity
+div by 0
+
+let price = 1000;
+let avgPrice = price / 0;
+console.log(`Avg Price ${avgPrice}`);
+/////////////////////////////////////////////////////////////////////////////////////////
+booleans:
+  
+js supports booleans with value of true / false
+
+
+constrol structures
+
+1. if ... if ..else, switch case : similar to c / c ++ and java
+
+operators 
+ Tenary operator : to replace if condtion.
+
+Equality operator:
+
+==, ===
+!=,!==
+
+== : compares only value and does not compare type.
+     it is bug. buggy operator.
+=== : Compares value and type
+
+Recommandation : Use always "==="
+
+
+comparsional operators
+
+ <,<=,>,>=, : similar to c and c++
+
+conditional operators
+
+ || ,&& 
+
+
+In js which is true and which falsy:
+////////////////////////////////////
+
+In js every thing is true expect the following values.
+
+Falsy Values:
+
+1.boolean false
+2.0
+3.undefined
+4.empty string "",''
+5.NaN
+6.null
+
+//booleans
+
+let isActive = true;
+let isEnabled = false;
+console.log(`IsActive ${isActive}`);
+console.log(`Is Enabled ${isEnabled}`);
+
+if (isActive) {
+    console.log('Active')
+} else {
+    console.log('In active');
+}
+//tenary operator
+isEnabled ? console.log('Enabled') : console.log('Disabled')
+
+//Eq: if you are comparing two variables
+
+let a = 10;
+let b = 10;
+if (a == b) {
+    console.log('A and B are equal')
+} else {
+    console.log('A and B are not equal')
+
+}
+
+//comparing strings and numbers not valid
+
+let x = "10";
+let y = 10;
+if (x == y) {
+    console.log('X and Y are equal')
+} else {
+    console.log('X and Y are not equal')
+}
+if (x === y) {
+    console.log('X and Y are equal')
+} else {
+    console.log('X and Y are not equal')
+}
+//||
+if (isActive || isEnabled) {
+    console.log('Ok')
+} else {
+    console.log('Not Ok!')
+}
+//////////////////////////////////////////////////////////////////////////////////
+//Advanced booleans
+
+let start = 1;
+if (start) {
+    console.log('Started')
+} else {
+    console.log('Not Started')
+}
+
+let message;
+let res = message ? "Hai" : "Welcome"
+console.log(res);
+/////////////////////////////////////////////////////////////////////////////////
+// || 
+
+/**
+ * if first operand(price) is truthy , the result would be first operand else 
+ * result would be second
+ */
+let price = 199;
+let priceValue = price || 10;
+console.log(`Price Value ${priceValue}`);
+
+// && : please follow the above rule but opposit
+........................................................................................
+
+
+Type of variable, reinitalization:
+...................................
+
+js provides a special operator called "type of" operator
+
+type of operator
+1.returns the runtime type of value in smaller case "number"
+
+
+//how to reinitalize the variables.
+
+let myvariable = 100;
+let price;
+let name = "test"
+let a = 10;
+let b = "$90";
+let ab = a * b;
+let x = 10 / 0;
+
+console.log(typeof myvariable)
+console.log(typeof price)
+console.log(typeof name);
+console.log(typeof ab);
+console.log(typeof x);
+
+//////////////////////////////////////////////////////////////////////////
+let foo = 10;
+console.log(typeof foo);
+foo = true;
+console.log(typeof foo);
+foo ="test";
+console.log(typeof foo);
+////////////////////////////////////////////////////////////////////////////////
+
+//what if i dont want to reinitalize the variable
+const PI =3.14
+console.log(`PI ${PI}`);
+//PI =90.89;
+//console.log(`PI ${PI}`);
+
+//const variable must have been initalized to any value
+// const FOO;
+// console.log(`FOO ${FOO}`);
+
+//////////////////////////////////////////////////////////////////////////////////
+
+//loops
+for (let i = 0; i < 10; i++) {
+    console.log(i);
+}
+//while , do while remains same other languages
+
+other keywords:
+break,continue,switch...
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Functions and functional programming:
+....................................
+
+in javascript logic is represented in functions.
+
+
+syntax:
+
+ function functionName(Args){
+   //body
+   return statement
+ }
+
+
+//functions declaration
+
+function sayHello() {
+    console.log('Hello!')
+}
+//function calling/ invocation
+sayHello();
+////////////////////////////////////////////////////////////////////////
+//Args and Parameters
+
+//a and b are args
+//default values : default args
+function add(a = 1, b = 1) {
+    let result = a + b;
+    console.log(`Add Result is ${result}`);
+}
+//10,10 are parameters
+add(10, 10);
+//parameters are hardcoded
+add(1, 1);
+//parameters are passed through variables
+let x = 90;
+let y = 90;
+add(x, y);
+
+//if no parameters are passed
+add(); //undefined,undefined
+
+add(12); //value,undefined
+/////////////////////////////////////////////////////////////////////////////////
+
+//i want to design function which should take no of parameters,but i dont know 
+//in advance
+//es 6 : var args : using rest operator
+function logger(context, ...args) {
+    //in es5 , argugments
+    //console.log(arguments)
+    console.log(context, args);
+}
+logger('Application', 'info', 'This is good message');
+logger('Device', 'error', 'Something went wrong', 501);
+////////////////////////////////////////////////////////////////////////////////
+//return statement
+function getStockValue() {
+    return 100;
+}
+console.log(getStockValue());
+function getQty() {
+    let qty = 100;
+    return qty;
+}
+console.log(getQty());
+function getInfo(info) {
+    return info;
+}
+console.log(getInfo('this is javascript!'));
+
+function login(userName, password) {
+    if (userName === 'admin' && password === 'admin') {
+        return true;
+    }
+    return; //undefined : falsy value
+}
+login('admin', 'admin') ? console.log('Login success!') : console.log('Login failed!');
+login('foo', 'foo') ? console.log('Login success!') : console.log('Login failed!');
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+function literals:
+.................
+
+function is value /literal like numbers
+
+let a =10;
+
+function can be assigned to a variable.
+
+once if you assign function to a variable, that variable is used to point that function
+and that variable can be used to invoke that function.
+
+
+/**
+ * 
+once if you assign function to a variable, that variable is used to point that function
+and that variable can be used to invoke that function.
+**/
+
+//way -1
+function sayHello(name) {
+    console.log('hello', name)
+    return `Hello ${name}`;
+}
+let hello = sayHello;
+//invoke that function
+let result = hello('Subramanian');
+console.log(result);
+//////////////////////////////////////////////////////////////////////////////////
+
+//anonmous function : function without name
+let hai = function (name='defaultName') {
+   //console.log(`Hai ${name}`)
+   return `Hai ${name}`;
+};
+console.log(hai('subramanian'));
+///////////////////////////////////////////////////////////////////////////////////
+
+function parameters:
+
+What could be function parameters?
+
+ "Any literal" : number,string,boolean,undefined,"function",objects
+
+//function as parameter to another function
+
+//connect =function(){}
+function startServer(connect) {
+    const result = connect('HTTP');
+    console.log(result);
+}
+
+startServer(function (name) {
+    // console.log(`${name} Server Started!`);
+    return `${name} Server Started!`
+});
+///////////////////////////////////////////////////////////////////
+
+function startClient(connect) {
+    connect('Mobile');
+}
+let handler = function (name) {
+    console.log(`${name} Client is ready!`);
+};
+startClient(handler);
+
+/////////////////////////////////////////////////////////////////////////////////
+
+Returning function from another function:
+..........................................
+
+Since function is literal, we can return function from another function.
+
+
+function welcome() {
+    console.log('welcome')
+    //nested function
+    function sayHello(name) {
+        console.log('Hello!!!!', name);
+    }
+    //sayHello();
+    return sayHello;
+}
+let hello = welcome();
+hello('Subramanian');
+//////////////////////////////////////////////////////////////////////////
+function counter() {
+    return function () {
+        return 10;
+    }
+}
+let inc = counter()
+console.log(inc());
+
+//short cut
+console.log(counter()());
+///////////////////////////////////////////////////////////////////////////////////
+//Deep nesting: function inside funciton inside function
+//CURRRY Function
+function prepareCake(iceCream) {
+    return function (sugar) {
+        return function (milk) {
+            return function (color) {
+                return `${iceCream} ${sugar} ${milk} ${color} `
+            }
+        }
+    }
+}
+let cake = prepareCake('cream')('sugar')('milk')('color')
+console.log(`Cake : ${cake}`);
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+ES 6 Function declaration:
+
+ Arrow functions:
+////////////////////
+
+Why arrow functions
+
+1.simple syntax : syntax sugar on function declaration
+
+2.the value of "this" is different 
+
+
+//es 5 function declaration
+let hai = function () {
+    console.log('Hai');
+};
+hai();
+//arrow functions
+
+let hi = () => {
+    console.log('Hai');
+};
+hi();
+//arrow function flavours
+
+//1.if function has only one line of body; remove {}
+hi = () => console.log('Hai');
+hi();
+/////////////////////////////////////////////////////////////////////////////////
+//2.args and parameters: multi parameters with default value
+let add = (a = 0, b = 0) => {
+    let r = a + b;
+    console.log(`The result is ${r}`);
+};
+add(1, 1);
+/////////////////////////////////////////////////////////////////////////////////
+//3.Single parameter, no default value : drop ()
+let setName = name => console.log(`Name ${name}`);
+setName('Subramamanian')
+////////////////////////////////////////////////////////////////////////////////
+//4.No Parameter drop () / _
+let greet = _ => console.log('Greetings!');
+greet();
+///////////////////////////////////////////////////////////////////////////////
+//5.Return value
+let substract = (a = 0, b = 0) => {
+    return a - b;
+};
+console.log(substract(2, 1));
+//6.only return : you can drop {} and return statement
+substract = (a = 0, b = 0) => a - b;
+console.log(substract(2, 1));
+//////////////////////////////////////////////////////////////////////////////////
+//7.single parameter ,no default value , return the same.
+let stock = value => value;
+console.log(stock(2000));
+//////////////////////////////////////////////////////////////////////////////////
+//how to pass function as parameter in arrow version.
+// function startServer(connect) {
+//     connect('HTTP');
+// }
+let startServer = connect => connect('HTTP');
+// startServer(function () {
+//     console.log(`Server Started!`);
+// });
+startServer(name => console.log(` ${name} Server Started!`));
+//////////////////////////////////////////////////////////////////////////
+
+// function startClient(connect) {
+//     connect('Mobile');
+// }
+let startClient = connect => connect('Mobile');
+
+let handler = name => console.log(`${name} Client is ready!`);
+startClient(handler);
+///////////////////////////////////////////////////////////////////////////////
+//return arrow 
+// function counter() {
+//     return function () {
+//         return 10;
+//     }
+// }
+// const counter = () => {
+//     return () => 10;
+// }
+const counter = () => () => 10;
+let inc = counter()
+console.log(inc());
+console.log(counter()());
+/////////////////////////////////////////////////////////////////////////////////
+
+// function prepareCake(iceCream) {
+//     return function (sugar) {
+//         return function (milk) {
+//             return function (color) {
+//                 return `${iceCream} ${sugar} ${milk} ${color} `
+//             }
+//         }
+//     }
+// }
+const prepareCake = iceCream => sugar => milk => color => `${iceCream} ${sugar} ${milk} ${color} `
+let cake = prepareCake('cream')('sugar')('milk')('color')
+console.log(`Cake : ${cake}`);
+//////////////////////////////////////////////////////////////////////////////////////////
+Immediately-invoked Function Expression :
+........................................
+
+(function () {
+    statements
+})();
+
+//iife
+
+let result = (function (game) {
+    console.log(`${game} is initalized`);
+    return 'Version 1.0.0'
+})('Game');
+console.log(result);
+
+let res = (game => {
+    console.log(`${game} is initalized`);
+    return 'Version 1.0.0'
+})('Play Station');
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Object based Programming:
+.........................
+
+
+
+
+
+
+
+
+
+
+
+
