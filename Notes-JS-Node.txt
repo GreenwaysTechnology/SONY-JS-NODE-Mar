@@ -863,12 +863,1129 @@ let res = (game => {
 Object based Programming:
 .........................
 
+Object based vs Object oriented Concept:
+........................................
+
+OO concepts:
+...........
+
+1.Abstraction
+   class based
+2.Encapsulation
+   code sharing visibility
+3.Modularity
+   -code sharing
+4.Hierachy
+   -HAS-A 
+   -IS-A inheritance
+5.Typing
+   -Polymorphsim
+      -Compile - runtime
+----------------------
+6.Concurrency
+   -Process level Multi threading
+   -Kernal level multi threading : Async
+7.Persistency
+  -stroage
+
+
+if any language does not support any one of  first 5 principles fully or paritally then
+those languages are called as Object based language.
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+What is Object?
+
+Object can be explained in three views
+
+1.real time
+   Any thing can be object, but it should be in problem domain.
+2.software modeling
+   UML digarams
+3.Program view
+   Memory representation.
+
+In languages:
+
+ Objects are runtime representation of data and methods which are grouped under one single
+ unit we "class".
+
+Javascript is class free object based pl. no classes like traditional oo language.
+
+classes are repsented in js as functions.
+
+Roles of Functions
+
+1.function can act as stack frame. holding biz logic
+2.function can act as Object template(class)
+
+How decision is made about function 
+
+  - during function invocation.
+
+funciton invocation syntax
+
+    fun();  => stack frame creation.
+ new fun(); => Object creation
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Coding standards:
+................
+
+1.functions
+
+ if function is declared for holding biz logic, then
+
+  name of the function should be 
+
+         verb  => start,stop,calculate.....
+         verb+Noun => startServer, stopServer...
+
+ if function is declared for creating objects then
+
+  name of the function should be 
+       Noun =>Employee,Customer,Player,PlayStation,Patient
+////////////////////////////////////////////////////////////////////////////////////
+
+            Objects are created inside javascript runtime "Heap Memory".
+
+Objects Creational Patterns:
+
+1.Constructor pattern
+   functions
+   classes : es 6
+   
+2.Literal Pattern
+
+Object => state + Behaviour =>instance variables and instance methods
+ how to declare object properties(state,behaviour)
+  "this" : keyword  is used to declare
+
+
+
+//declare class , object properties
+
+function Employee() {
+    //state
+    this.id = 1;
+    this.name = 'Subramanian';
+    this.city = 'Coimbatore';
+    this.salary = 12000;
+    this.da = 1000;
+    this.hra = 2000;
+    //behaviours : methods
+    this.calculateSalary = function () {
+        return this.salary + this.hra + this.da;
+    }
+    this.calculateTax = function () {
+        return (this.salary + this.hra + this.da) * 10 / 100
+    }
+}
+//object creation
+//emp is reference variable
+//new is operator
+//Employee() ;; function call , constructor call
+const emp = new Employee();
+//Access Object Properties : using .operator / [] operator.
+console.log(`Id ${emp.id} Name ${emp.name} city ${emp.city}`)
+console.log(`Salary ${emp.calculateSalary()}`);
+console.log(`TAX ${emp.calculateTax()}`);
+///////////////////////////////////////////////////////////////////////////////////////////
+
+state initalizations:
+
+1.hardcoded state
+this.id = 1;
+    this.name = 'Subramanian';
+    this.city = 'Coimbatore';
+    this.salary = 12000;
+    this.da = 1000;
+    this.hra = 2000;
+  
+
+2.after object creation
+ by using reference variable you can update object properties
+
+
+//state initalization
+
+function Employee() {
+    //hardcoded
+    this.id = 1;
+    this.name = 'Subramanian';
+    this.city = 'Coimbatore';
+    this.salary = 12000;
+    this.da = 1000;
+    this.hra = 2000;
+    //behaviours : methods
+    this.calculateSalary = function () {
+        return this.salary + this.hra + this.da;
+    }
+    this.calculateTax = function () {
+        return (this.salary + this.hra + this.da) * 10 / 100
+    }
+}
+//object creation
+//emp is reference variable
+//new is operator
+//Employee() ;; function call , constructor call
+const emp = new Employee();
+//Access Object Properties : using .operator / [] operator.
+console.log(`Id ${emp.id} Name ${emp.name} city ${emp.city}`)
+console.log(`Salary ${emp.calculateSalary()}`);
+console.log(`TAX ${emp.calculateTax()}`);
+
+//new values
+emp.id =1999;
+emp.name = 'Ram';
+emp.city = 'Banaglore';
+emp.salary =7888;
+emp.da=300;
+console.log(`Id ${emp.id} Name ${emp.name} city ${emp.city}`)
+console.log(`Salary ${emp.calculateSalary()}`);
+console.log(`TAX ${emp.calculateTax()}`);
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+3.using constructor parameters
+
+//How many objects you can create using single function
+//You can create More objects.
+
+
+//default constructor args
+function Employee(id = 1, name = 'Subramanian', city = 'Coimbatore', salary = 1000, da = 1000, hra = 2000) {
+    this.id = id;
+    this.name = name;
+    this.city = city;
+    this.salary = salary
+    this.da = da;
+    this.hra = hra;
+    //behaviours : methods
+    this.calculateSalary = function () {
+        return this.salary + this.hra + this.da;
+    }
+    this.calculateTax = function () {
+        return (this.salary + this.hra + this.da) * 10 / 100
+    }
+}
+let emp = null;
+
+console.log(emp);
+
+emp = new Employee();
+console.log(`Id ${emp.id} Name ${emp.name} city ${emp.city}`)
+console.log(`Salary ${emp.calculateSalary()}`);
+console.log(`TAX ${emp.calculateTax()}`);
+
+emp = new Employee(3, 'karthik', 'chennai', 7888, 800, 1200);
+console.log(`Id ${emp.id} Name ${emp.name} city ${emp.city}`)
+console.log(`Salary ${emp.calculateSalary()}`);
+console.log(`TAX ${emp.calculateTax()}`);
+
+
+emp = new Employee(4, 'John', 'chennai', 7888, 800, 1200);
+console.log(`Id ${emp.id} Name ${emp.name} city ${emp.city}`)
+console.log(`Salary ${emp.calculateSalary()}`);
+console.log(`TAX ${emp.calculateTax()}`);
+
+//this for garbage collection
+emp = null;
+//////////////////////////////////////////////////////////////////////////////////////////
+
+Some of the errors when you access object properties:
+....................................................
+let emp;
+console.log(emp);
+console.log(`Id ${emp.id} Name ${emp.name} city ${emp.city}`)
+
+
+
+
+console.log(`Id ${emp.id} Name ${emp.name} city ${emp.city}`)
+                      ^
+
+TypeError: Cannot read property 'id' of undefined
+    at Object.<anonymous> (C:\session\sony\js-apps\src\index.js:19:23)
+    at Module._compile (internal/modules/cjs/loader.js:959:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)
+    at Module.load (internal/modules/cjs/loader.js:815:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:727:14)
+    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)
+    at internal/main/run_main_module.js:17:11
+
+
+
+let emp=null;
+console.log(emp);
+console.log(`Id ${emp.id} Name ${emp.name} city ${emp.city}`)
+
+
+console.log(`Id ${emp.id} Name ${emp.name} city ${emp.city}`)
+                      ^
+
+TypeError: Cannot read property 'id' of null
+    at Object.<anonymous> (C:\session\sony\js-apps\src\index.js:19:23)
+    at Module._compile (internal/modules/cjs/loader.js:959:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)
+    at Module.load (internal/modules/cjs/loader.js:815:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:727:14)
+    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)
+    at internal/main/run_main_module.js:17:11
+///////////////////////////////////////////////////////////////////////////////////////////
+
+Hierachy :
+
+ Object Relation ship.
+
+HAS-A :composition 
+
+function Address(doorno = '1', street = 'street', city = 'city', state = 'state', zipcode = 'zipcode') {
+    this.street = street
+    this.doorno = doorno
+    this.city = city;
+    this.state = state;
+    this.zipcode = zipcode
+}
+
+function Employee(id = 1, name = 'defaultName', address = new Address()) {
+    this.id = id;
+    this.name = name;
+    //has-a 
+    this.address = address;
+}
+let emp = null;
+
+emp = new Employee();
+console.log(`Id ${emp.id} Name ${emp.name} ${emp.address.city}`)
+
+let address = new Address('23', '10 th street', 'chennai', 'TN', '600002')
+emp = new Employee(34, 'John', address);
+console.log(`Id ${emp.id} Name ${emp.name} ${emp.address.city}`)
+
+emp = new Employee(34, 'John', new Address('23', '10 th street', 'chennai', 'TN', '600002'));
+console.log(`Id ${emp.id} Name ${emp.name} ${emp.address.city}`)
+///////////////////////////////////////////////////////////////////////////////////////////
+
+IS-A : inheritance 
+
+Javascript is object based language.
+
+JS inherits Objects from Objects not classes.
+  -Object inheritance
+
+JS A prototype-based language?
+
+   What is ProtoType?
+      It is Object , used for inheritance, sharing properties across multiple instances
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Program :  Collection of instructions.
+instructions : collections of data , methods.
+
+Types of program
+1.passive
+   The program which is not in RAM
+   The program which is in RAM but which is not accessed by CPU 
+2.active
+
+ The program which is in RAM
+ The program which is in RAM but which is  accessed by CPU 
+ 
+Active Programs called as process.
+
+Every Process /any thing in RAM has common structure:
+///////////////////////////////////////////////////////////////////////////////////////////
+
+Objects :
+
+ passive : which is in heap ,but not accessing.
+ active : accessd by cpu
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Object and Proto type:
+
+ In javascript everything is Object including function.
+
+every function in javascript is Object, we call "Function"
+
+function Employee(){
+
+}
+
+console.log(Employee.name)
+
+ Employee()====>Employee.call()===>stack
+
+ new Emplyee()=====> Heap
+
+
+ instance : active  heap epresentation of "function object"  
+
+Prototype is "passive Represention" 
+
+Points:
+
+1.Every instance is created from "Passive" function Object
+
+   "Object itself act as instance template"
+   "In java Class Object is used to create real instances"
+
+ function(meta)---->new Instance()
+
+2.Any instance is created from functions will have its own prototype Passive Object.
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+function Employee(id = 1) {
+    //instance variable
+    this.id = id;
+}
+
+//Getting Employee's Prototype
+console.dir(Employee.prototype);
+
+//Add sharable properties on prototype ,so that all instance can get the data
+Employee.prototype.firstName = 'foo'
+Employee.prototype.calculateSalary = function () {
+    return 1000;
+}
+
+let emp = null;
+
+emp = new Employee() //new Instance from Employee Function Object
+emp.id = 9000;
+//overriding
+emp.calculateSalary = function () {
+    return 67800;
+}
+
+
+console.log(emp.id, emp.firstName, emp.calculateSalary())
+
+emp = new Employee() //new Instance from Employee Function Object
+console.log(emp.id, emp.firstName, emp.calculateSalary())
+
+emp = new Employee() //new Instance from Employee Function Object
+console.log(emp.id, emp.firstName, emp.calculateSalary())
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+Object Augmentation , Object property lookup,Prototype chain:
+.............................................................
+
+Object Augmentation:
+
+
+Object ==Memory Representation.
+  What is internal structure of object in c++ /java
+  instance data + vtable.
+
+Javascript objects are dictionary /hash table/ hash map
+   all javascript objects simple key--value pair datastructure.
+
+class A{
+ int x; 
+
+ getX
+}
+
+A ===> x +vtable(getx)===>Object 
+
+once object is created , its structure cant be altered
+ like adding new property,delete existing proprety while running.
+
+But in js it is possible, you can add,update,delete,iterate: how
+  because it is simple datastructure.
+  "This is process we can object augmentation".
+
+
+//Object Augmentation: Adding,deleting,updating,iterating object.
+
+function Employee() {
+    //no property
+}
+//Proto type augmentation
+Employee.prototype.salary = 9000;
+let emp = new Employee();
+
+console.dir(emp);
+
+//Add new property
+emp.id = 1000;
+emp.name = 'Ram' //add operation
+console.log(`Id ${emp.id} Name ${emp.name}`)
+//if prop found, then update else add.
+emp.name = 'suburamanian' //update operation
+emp.city = 'coimbatore'
+
+//when you look up property, first js search the property in the current
+//object---if not-->it looks up its immedate parent(Prototype)--if not--it 
+//looks up its immedate parent---Object
+console.log(`Id ${emp.id} Name ${emp.name} ${emp.city} ${emp.salary}`) //getters
+
+//delete a property
+delete emp.city;
+console.log(`Id ${emp.id} Name ${emp.name} ${emp.city} ${emp.salary}`) //getters
+
+
+//iterations
+
+//object for.in.loop
+
+for (key in emp) {
+    console.log(key, emp[key]); // [] dymamic prop value access:
+}
+///////////////////////////////////////////////////////////////////////////////////////////
+
+ES 6 classes 
+
+//
+
+class Employee {
+    //instance variables
+    id = 1;
+    name = 'Subramanian'
+    //methods
+    calculateSalary() {
+        return 1000;
+    }
+    calculateTAX = () => 3000;
+}
+let emp = new Employee();
+console.log(`Id ${emp.id}  salary ${emp.calculateSalary()} ${emp.calculateTAX()}` );
+///////////////////////////////////////////////////////////////////////////////////////////
+
+//state intialization in classes
+
+//
+
+class Employee {
+    //instance variables
+    constructor(id = 1, name = 'defaultName') {
+        this.id = id;
+        this.name = name;
+    }
+    //methods
+    calculateSalary() {
+        return 1000;
+    }
+    calculateTAX = () => 3000;
+}
+let emp = null;
+emp = new Employee();
+console.log(`Id ${emp.id} ${emp.name}  salary ${emp.calculateSalary()} ${emp.calculateTAX()}`);
+//after object creation
+emp = new Employee();
+emp.id = 90000;
+emp.name = 'john'
+console.log(`Id ${emp.id} ${emp.name}  salary ${emp.calculateSalary()} ${emp.calculateTAX()}`);
+
+//constructor params
+emp = new Employee(45, 'Kumar');
+console.log(`Id ${emp.id} ${emp.name}  salary ${emp.calculateSalary()} ${emp.calculateTAX()}`);
+///////////////////////////////////////////////////////////////////////////////////////////
+
+class Address {
+    constructor(doorno = '1', street = 'street', city = 'city', state = 'state', zipcode = 'zipcode') {
+        this.street = street
+        this.doorno = doorno
+        this.city = city;
+        this.state = state;
+        this.zipcode = zipcode
+    }
+}
+
+class Employee {
+    constructor(id = 1, name = 'defaultName', address = new Address()) {
+        this.id = id;
+        this.name = name;
+        //has-a 
+        this.address = address;
+    }
+}
+let emp = null;
+
+emp = new Employee();
+console.log(`Id ${emp.id} Name ${emp.name} ${emp.address.city}`)
+
+let address = new Address('23', '10 th street', 'chennai', 'TN', '600002')
+emp = new Employee(34, 'John', address);
+console.log(`Id ${emp.id} Name ${emp.name} ${emp.address.city}`)
+
+emp = new Employee(34, 'John', new Address('23', '10 th street', 'chennai', 'TN', '600002'));
+console.log(`Id ${emp.id} Name ${emp.name} ${emp.address.city}`)
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+class and inheritance:
+......................
+
+class Account {
+    constructor(firstName = 'firstName') {
+        this.firstName = firstName;
+        console.log('Account is initalized')
+    }
+    //methods
+    withdraw() {
+        return 100;
+    }
+}
+Account.prototype.secKey = 'XXX@#$#$'
+Account.prototype.deposit = function(){
+    return 0;
+}
+
+class SavingsAccount extends Account {
+    constructor(firstName) {
+        super(firstName);//call super class constructor
+        console.log('SavingsAccount is initalized')
+    }
+    //redefining
+    withdraw() {
+        return 100888 * super.withdraw();
+    }
+}
+let sb = new SavingsAccount('Subramanian');
+console.log(`${sb.firstName} withdraw ${sb.withdraw()} ${sb.deposit()} ${sb.secKey}`)
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Literal Objects:
+
+1.no function/classes to create object
+
+let refVar = {
+ key:literal,
+ key:literal
+}
+
+
+//literal objects
+
+let emp = {
+    id: 1,
+    name: 'Subramanian',
+    salary: 1900,
+    isActive: true,
+    //methods
+    //es 5
+    // calculateSalary: function () {
+    //     return 1000;
+    // }
+    //es 6
+    //calculateSalary: () => 1000
+    //es 6 class like methods
+    calculateSalary(){
+        return 1000
+    }
+
+};
+console.log('Employee information')
+console.log(`Id ${emp.id} name ${emp.name} salary ${emp.salary}`)
+console.log(`Total Salary ${emp.calculateSalary()}`)
+///////////////////////////////////////////////////////////////////////////////
+
+state intialization:
+//literal objects :state initalization 
+//hardcoded
+
+let emp = {
+    id: 1,
+    name: 'Subramanian',
+    salary: 1900,
+    isActive: true,
+    calculateSalary() {
+        return 1000
+    }
+
+};
+console.log('Employee information')
+console.log(`Id ${emp.id} name ${emp.name} salary ${emp.salary}`)
+
+emp.id = 9000
+emp.name = 'ram'
+console.log(`Id ${emp.id} name ${emp.name} salary ${emp.salary}`)
+
+console.log(`Total Salary ${emp.calculateSalary()}`)
+/////////////////////////////////////////////////////////////////////////////////////////
+
+HAS-A and is-a :
+
+
+//has-a relationship
+
+let emp = {
+    id: 1,
+    name: 'Subramanian',
+    salary: 1900,
+    isActive: true,
+    //has-a
+    address: {
+        city: 'Chennai',
+        state: 'TN'
+    },
+    calculateSalary() {
+        return 1000
+    }
+
+};
+console.log('Employee information')
+console.log(`Id ${emp.id} name ${emp.name} salary ${emp.salary} ${emp.address.city}`)
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Literal Object keys and values:
+
+Literal object key has its data type and value type is differnt
+
+ id:10
+ id has one datatype
+ 10 is one datatype
+
+Point :
+
+ key data type is always string.
+ 
+ string means must be enclosed with "" or '' ``.
+
+
+let emp = {
+    id: 1,
+    name: 'Subramanian',
+    salary: 1900,
+    isActive: true,
+    //has-a
+    address: {
+        city: 'Chennai',
+        state: 'TN'
+    },
+    calculateSalary() {
+        return 1000
+    }
+
+};
+
+look at above code keys not enclosed as string literal
+   but if not also it is string.
+
+can i add double quotes to key : yes
+
+
+
+//has-a relationship
+
+let emp = {
+    "id": 1,
+    "name": 'Subramanian',
+    "salary": 1900,
+    "isActive": true,
+    //has-a
+    "address": {
+        "city": 'Chennai',
+        "state": 'TN'
+    },
+    calculateSalary() {
+        return 1000
+    }
+
+};
+console.log('Employee information')
+console.log(`Id ${emp.id} name ${emp.name} salary ${emp.salary} ${emp.address.city}`)
+////////////////////////////////////////////////////////////////////////////////////////////
+Object Destructuring: ES 6
+..........................
+
+Destructuring means breaking the object into keys.
+
+
+
+
+//passing object as parameter
+
+// function printEmployee(emp) {
+//     console.log(`Id ${emp.id}`)
+//     console.log(`Name ${emp.name}`)
+//     console.log(`Salary ${emp.salary}`)
+//     console.log(`IsActive ${emp.isActive}`)
+//     console.log(`City ${emp.address.city}`)
+//     console.log(`State ${emp.address.state}`)
+// }
+
+
+// function printEmployee(emp) {
+//     //Object destrucing
+//     const { id, name, salary, calculateSalary, 
+//         isActive, address: { city, state } } = emp;
+//     console.log(`Id ${id}`)
+//     console.log(`Name ${name}`)
+//     console.log(`Salary ${salary} ${calculateSalary()}`)
+//     console.log(`IsActive ${isActive}`)
+//     console.log(`City ${city}`)
+//     console.log(`State ${state}`)
+// }
+
+// function printEmployee({ id, name, salary, calculateSalary,
+//     isActive, address: { city, state } }) {
+//     console.log(`Id ${id}`)
+//     console.log(`Name ${name}`)
+//     console.log(`Salary ${salary} ${calculateSalary()}`)
+//     console.log(`IsActive ${isActive}`)
+//     console.log(`City ${city}`)
+//     console.log(`State ${state}`)
+// }
+const printEmployee = ({ id, name, salary, calculateSalary,
+    isActive, address: { city, state } }) => {
+    console.log(`Id ${id}`)
+    console.log(`Name ${name}`)
+    console.log(`Salary ${salary} ${calculateSalary()}`)
+    console.log(`IsActive ${isActive}`)
+    console.log(`City ${city}`)
+    console.log(`State ${state}`)
+}
+
+
+let emp = {
+    id: 1,
+    name: 'Subramanian',
+    salary: 1900,
+    isActive: true,
+    //has-a
+    address: {
+        city: 'Chennai',
+        state: 'TN'
+    },
+    calculateSalary() {
+        return 1000
+    }
+
+};
+printEmployee(emp);
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+//Object returning and destrucing
+
+
+// function getEmployee(id = 1, name = 'Subramanian', isActive = false, salary = 1900, city = 'Chennai', state = 'TN') {
+//     return {
+//         id: id,
+//         name: name,
+//         salary: salary,
+//         isActive: isActive,
+//         //has-a
+//         address: {
+//             city: city,
+//             state: state
+//         }
+//     };
+// }
+
+// function getEmployee(id = 1, name = 'Subramanian', isActive = false, salary = 1900, city = 'Chennai', state = 'TN') {
+
+//     //If key:localvariable is same eg id:id - Make it one, remove any one
+//     return {
+//         id,
+//         name,
+//         salary,
+//         isActive,
+//         //has-a
+//         address: {
+//             city,
+//             state
+//         }
+//     };
+// }
+//Arrow version
+const getEmployee = (id = 1, name = 'Subramanian',
+    isActive = false, salary = 1900, city = 'Chennai', state = 'TN') => ({
+        id,
+        name,
+        salary,
+        isActive,
+        address: {
+            city,
+            state
+        }
+    });
+
+
+const { id, name, salary, calculateSalary,
+    isActive, address: { city, state } } = getEmployee();
+console.log(`Id ${id}`)
+console.log(`Name ${name}`)
+console.log(`Salary ${salary} `)
+console.log(`IsActive ${isActive}`)
+console.log(`City ${city}`)
+console.log(`State ${state}`)
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Javascript Built in Objects:
+...........................
+
+1.Object
+
+ Object super class /Object in js.
+ Every object has Object super object.
+//Buit in objects
+
+//Object
+
+const emp = {
+    id: 1
+}
+Object.freeze(emp);
+//add new Property
+emp.name = 'subramanian'
+
+console.log(emp.id, emp.name)
+
+//Object.assign  : clone the Object  , return new object
+
+const customer = {
+    id: 1
+}
+const newCustomer = Object.assign({}, customer, { name: 'Subramanian', city: 'coimbatore' })
+console.log(newCustomer)
+
+2.Wrapper Objects 
+   Any wrapper objects 
+     - new WrapperFunction() = new Number(), new String(), new Boolean()
+     - literal pattern "" ,10,true =>This is recommended.
+
+    "es" =>instance String Object
+ 
+//wrappers :
+
+let name = "hello".trim().toUpperCase();//create string object
+console.log(name)
+
+//Numbers
+let stockValue =89.837342.toFixed(2)
+console.log(stockValue)
+
+3.Array : Datastructure
+
+Array is Object
+Array is dynamic 
+Array can act as queue,stack.....
+
+//Array Objects
+
+//how to declare basic prmitive arrays
+let numbers = [1, 2, 3, 4, 5, 6, 7, 8];
+//Iterate :
+//for..loop : dont use
+for (let i = 0; i < numbers.length; i++) {
+    console.log(numbers[i]);
+}
+//iterators: for..each
+numbers.forEach((i, index) => console.log(i));
+///////////////////////////////////////////////////////////////////////////////
+//List of employees
+const employees = [
+    { id: 1, name: 'A1', salary: 100 },
+    { id: 2, name: 'A2', salary: 500 },
+    { id: 3, name: 'A3', salary: 1000 },
+    { id: 4, name: 'A4', salary: 800 },
+    { id: 5, name: 'A5', salary: 1300 }
+];
+employees.forEach(emp => console.log(emp));
+employees.forEach(emp => console.log(emp.id, emp.name));
+employees.forEach(({ id, name }) => console.log(id, name));
+
+//Use case I want to print all employee name with lower case
+//Transformation api : transform and return new array:pure funciton/immutablity
+const transformedemps = employees.map(emp => emp.name.toLowerCase());
+console.log(transformedemps)
+
+//i need list of employees whose salary is less than 800
+//filter : works on boolean
+
+const filteredemps = employees.filter(emp => emp.salary <= 800);
+console.log(filteredemps);
+
+//Kindly findout how to add new element,delete,update element in the array
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+JSON: Javascript Object Notation:
+.................................
+
+History behind:
+..............
+
+In 2000, Ecommerce, Biz-Biz integration
+
+2001 : Data interchange conference held
+
+xml,json,text,tmp,yml..........................XML
+
+2005 :  JSON
+
+1.json is light weight than XML : Does not carry schema defintion only data
+2.JSON is platform,language indendant.
+3.JSON was discovered from Javascript literal object syntax.
+  
+
+JSON rules:
+
+1.json files are string/text/ascii files.
+
+2.JSON format is key ; value pair
+
+  key : is string , must be enclosed only with "".
+  value:
+   should be , string,number,boolean,other literal object, array.
+
+3.since json is text file, we need to extract data, and also we need to create json file
+   -we need json parsers
+
+The first parser is written by crock ford for javascript language :  json2.js
+
+then after that many language vendors started adding json parsers in the language level or as third party lib.
+
+ECMA 5 specfication , who added json parser in the language level. Now JSON parser is built in
+ES 5, ES 6.
+
+JS language provides parser as Object "JSON"   
+
+Parser method
+
+1.stringify :  OBject to string
+2.parse : string object.
+
+
+Parser :
+   string to object
+   object to string.
+//JSON Parser
+
+//Object
+const employees = [
+    { id: 1, name: 'A1', salary: 100 },
+    { id: 2, name: 'A2', salary: 500 },
+    { id: 3, name: 'A3', salary: 1000 },
+    { id: 4, name: 'A4', salary: 800 },
+    { id: 5, name: 'A5', salary: 1300 }
+];
+//Object to String
+const str = JSON.stringify(employees);
+console.log(str);
+
+//String to Object
+const obj = JSON.parse(str);
+console.log(obj)
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Math: Which has mathmetical operations.
+
+
+//Math
+console.log(Math.random())
+console.log(Math.sign(10))
+console.log(Math.pow(2,2))
+///////////////////////////////////////////////////////////////////////////////////////////
+How to handle runtime errors : exception handler
+
+try..catch,finally
+throw
+
+//Exception handling
+
+function validate(num) {
+    try {
+
+        if (num <= 10) {
+            throw new Error('Number is less than 10')
+        }
+        console.log(`Num ${num}`);
+
+
+    } catch (err) {
+        console.dir(err);
+    }
+    finally {
+        console.log('Done!')
+    }
+}
+validate(12)
+validate(1)
+
+////////////////////////******************************///////////////////////////////////////
+Concurrency : Node JS
+
+scope chain
+modularity
 
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 
 

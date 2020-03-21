@@ -1,13 +1,21 @@
+//Exception handling
 
-//iife
+function validate(num) {
+    try {
 
-let result = (function (game) {
-    console.log(`${game} is initalized`);
-    return 'Version 1.0.0'
-})('Game');
-console.log(result);
+        if (num <= 10) {
+            throw new Error('Number is less than 10')
+        }
+        console.log(`Num ${num}`);
 
-let res = (game => {
-    console.log(`${game} is initalized`);
-    return 'Version 1.0.0'
-})('Play Station');
+
+    } catch (err) {
+        console.dir(err);
+        throw err; //rethrowing...
+    }
+    finally {
+        console.log('Done!')
+    }
+}
+validate(12)
+validate(1)
