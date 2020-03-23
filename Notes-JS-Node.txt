@@ -1918,60 +1918,942 @@ validate(12)
 validate(1)
 
 ////////////////////////******************************///////////////////////////////////////
-Concurrency : Node JS
 
-scope chain
-modularity
+Scope chain and  this keyword:
+..............................
 
+Scope: visibility of variables ,functions,where it is visible
 
+Types of scopes:
 
+1.local scope
+  The scope of the variable is  with in the function.
+  Any thing is declared inside function is visible inside function only.
 
+//local scope
 
+function sayGreeter(){
+    //local variables
+    //var name = 'subramanian';
+    let name ='Subramanian';   
+    console.log(name);
+    function sayHello(){
+        console.log('Hello')
+    }
+}
+//console.log(name);
+sayHello();
+sayGreeter();
 
+2.block scope
+ 
+in c++/java , if any thing you declare inside block is visible inside that block only.
 
+function validate(name) {
 
+    if (name) {
+        //block
+        var message = 'Hello'
+    }
+    console.log(message);
+   // console.log(foo); //not defined
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
+validate();
 
 
 
+The above code will throw error for "foo"
+
+  ReferenceError: foo is not defined :
+     the variable is not declared no where.
+
+ The above code will print undefined for variable message
+ undefined :
+     The variable is declared but no value.
+
+
+The truth is javascript does not support block scope with "var" declaration.
+
+How it is working :
+
+source code : index.js
+
+function validate(name) {
+
+    if (name) {
+        //block
+        var message = 'Hello'
+    }
+    console.log(message);
+   // console.log(foo); //not defined
+
+}
+validate();
+     |
+   parsing phase : parser change the original code
+ 
+
+function validate(name) {
+    var message; 
+    if (name) {
+        //block
+        message= 'Hello'
+    }
+    console.log(message);
+ }
+
+  "The proces of moving variable declarations from blocks to functions at top position
+     'Hoisting' "
+
+What if i want to implement block scope?
+
+1. Using IEFF functions : ES 5 Style
+
+//avoiding hositing : using ieff functions
+function validate(name) {
+    if (name) {
+        //block
+        (function(){
+            var message = 'Hello'
+        })
+    }
+    console.log(message);
+   // console.log(foo); //not defined
+
+}
+validate();
+
+2.using let /const keyword
+
+//avoiding hoisting using let/const keyword
+function validate(name) {
+    if (name) {
+        let message = 'Hello';
+    }
+    console.log(message);
+}
+
+validate();
+
+so, var vs let
+
+var is hoisted
+let is not hoisted.
+
+Hoisting more eg:
+//////////////////
+//hositing eg
+
+console.log(i);
+var i = 10;
+console.log(i);
+//Parsed code
+/**
+ * var i;
+ * console.log(i);
+   i= 10;
+   console.log(i);
+ */
+
+//console.log(x);
+let x = 10;
+console.log(x);
+
+/**Parsed code
+console.log(x);
+let x =10;
+console.log(x);
+*/
+
+myfun()//
+var myfun= function(){
+    console.log('Hoisting');
+};
+myfun()
+
+//parsed code
+ 
+/**
+ * var myfun;
+ * myfun()
+ myfun= function(){
+    console.log('Hoisting');
+};
+myfun()**/
+
+
+literal function delclaration vs normal function declaration
+
+normal functions will be hoistied by default
+variable declarations with let never been hoisted, you cant even call before declarion.
+
+sayHello();
+function sayHello(){
+    console.log('Hello')
+}
+sayHello();
+
+/**
+ * function sayHello(){
+    console.log('Hello')
+}
+ * sayHello();
+   sayHello();
+ */
+
+*****************************************************************************************
+Three scopes in general: Based on variable declarations and binding
+
+1.static scope /Lexical scope
+2.dynamic scope
+3.Augmented scope - deprecated
+
+
+1.Static scope: (compile time in other languages)
+
+Static scope
+
+  Definition 1: 
+    Static scope: a language implements static scope, if only by looking at the source code one can determine in which environment a binding is resolved.
+
+   static scope is other wise is called lexcial scope 
+
+Environment:
+	Every execution context has an associated lexical environment.
+
+Lexical environment: 
+   A lexical environment is a structure used to define association between identifiers appearing in the context with their values. 
+
+
+ Each environment can have a reference to an optional parent environment.
+
+So an environment is a storage of variables, functions, and classes defined in a scope.
+
+
+Context:
+  Place / Container which contains other things
+
+Environment : is also place which is inside context.
+
+How code is intialized in java?
+Hello.class-----load class into jvm---loader---loads .class file into jvm---Hello.class will
+be initalized
+    -it will see all static variables,methods --it will put inisde method method area
+    -jvm will initalize meta object ---class Object : Hello.class
+    -Heap new instance is created
+       -Excution, we call methods....
+
+How code is initalized in javascript?
+
+
+Points :
+
+in js every thing object , including your code.
+
+
+ javascript wraps entire code into an object called "Context Object"
+
+Execution context:
+  Object which wraps js code.
+
+There are several types of ECMAScript code: 
+
+ "the global code, function code, eval code, and module code; each code is evaluated in its execution context"
+
+1.Global Context
+2.Funciton context
+3.Eval Context
+4.Module Context
+
+Each Object has its own "enviroment"
+
+
+Environment is a data structure which holds information about the
+correponding context.
+
+eg:
+ if global context ====> Global Envirmonent
+ if function context ===> Function enviroment.
+
+Structure of Environent:
+
+Technically, an environment is a key-value pair, consisting of an environment record (an actual storage table which maps identifiers(variables) to values), and a reference to the parent (which can be null).
+
+Execution order / Relation ship order:
+
+ GlobalEnv
+	---parent=null 
+   |
+   bar 
+      parent = global
+    |
+    zoo  
+       parent = bar
+      |
+      myfun
+        parent= zoo
+
+
+variable resolution in the scope chain (env which forms chain looks like prototype chain)
+.........................................................................................
+
+
+
+//scope chain
+
+//global scope
+let x = 10;
+
+function bar() {
+    let y=9000;
+    function zoo() {
+        function myfun() {
+            console.log(x);
+            console.log(y);
+        }
+        myfun()
+    }
+    zoo()
+}
+bar();
+//js scope chain loopkup
+ // myfun record --->zoo record---bar record---global scope--|if not then throw error
+
+     
+This is called scope chain, or lexical scope.
+
+
+
+When is lexical scope is fixed?
+
+
+Two cycles in js
+
+when visibility of a variable is activated.
+
+   1.During initalization/creation 
+           -Lexcial
+   2.Execution time/activation?
+   
+.......................................***********.........................................
+
+this keyword:
+.............
+
+
+Dynamic scope: Variable binding:
+
+The dynamic scope specifically for variables is not widely used on practice today.
+
+Definition : 
+   Dynamic scope: a language implements dynamic scope, 
+	if a "caller" defines an activation environment of a "callee".
+
+caller =>Object
+callee =>function
+
+How to implement dynamic binding in js?
+   
+   "this" keyword.
+  
+what is "this" in general?
+ 
+ "this" is implicit reference  variable.
+
+types of reference variable
+
+1.implicit
+   this
+ the value of this would "Object"
+2.explicit
+  emp is explicit
+let emp = new Employee()
+
+
+
+Defintion:
+ "This value":
+    in JavaScript this value is dynamically scoped
+    "value of this" dynamically identified not in creation phase
+    
+
+
+Who supplies the value of this?
+
+   The value of this is determined and provided exactly by the caller
+   
+   "The function binding is decided on object  dynamically".     
+
+/////////////////////////////////////////////////////////////////////////////////////////
+Implementation:
+.................
+
+variable binding:
+
+Who can be owner of a?
+
+ let a =10;
+
+Global context : global scope
+function context: function scope
+
+ owner of a can be function, global
+
+When the owner is identified?
+ 
+ -Creation phase / initalization Phase
+ -Exuction phase /Runtime Phase
+
+.................................................
+
+Who can be owner of sayHello?
+
+function sayHello(){
+    return this;
+}
+
+"The value of 'this' only owner of sayHello".
+
+How and when owner of sayHello is decided?
+
+Browsers:
+
+1.By default , in browser sayHello belong to window.
+
+Binding with window object in browser , which is more danager which will lead code corruption
+which is one of the javascript bug : Global scope.
+
+in order to fix bug: javascript introduced a concept 'strict' mode
+ in strict mode , any javascript language level bugs will be disabled automatically,
+so we can write quality code 
+
+Points:
+1.in non strict mode , this bound to window , I mean sayHello
+ is bound on window object by default. 
+2.In strict mode, this bound is decided by us based on object 
+  binding , meaning that function is free from any Object  binding default : this is recommended.
+
+
+Think: can "this" be bound with function "Creation phase"  
+       or can "this" be available in lexical scope?
+       or can "this" be available in static scope?
+                  No!
+
+
+
+Use case 1 : how to bind function dynamically  | how to initalze "this" dynamically"
+             how to decide the owner of the function?
+
+How to call function on objects dynamically?
+
+'use strict'
+
+function sayHello(){
+    return this; //owner 
+}
+console.log(sayHello());
+//Tell who is the owner of sayHello.
+//Use case 1 : i am going to tell window is owner
+console.log(sayHello.call(window));
+//sayHello can be part of any other object
+
+const greeter= {
+   message:'Hello'
+};
+console.log(sayHello.call(greeter));
+
+
+Function object provides  function binding apis
+1.call
+2.apply
+3.bind
+
+
+//call,apply,bind :  these api will plugin the funtions 
+//on to the objects dynamically with help of this keyword.
+'use strict';
+
+function getCordinate(...name) {
+    console.log(` ${name} ${this.x} y ${this.y}`)
+}
+
+const map = {
+    x: 1000,
+    y: 3888
+}
+window.x = 90;
+window.y = 899;
+
+// .call(target,parameter1,parameter2...)
+getCordinate.call(map, 'GooogleMap', 'goolge');
+getCordinate.call(window, 'Window', 'chrome');
+/////////////////////////////////////////////////////////////////////////////
+//apply
+
+function getStocks(...stocks) {
+    console.log(`${this.name}`)
+    console.log(stocks);
+}
+const stock = {
+    name: 'Sony'
+};
+//apply
+getStocks.apply(stock, [10, 20, 30, 40, 45])
+//call vs apply : call takes separate parameters, where as apply takes array as parameter
+////////////////////////////////////////////////////////////////////////////////
+//bind vs call and apply : bind never executes function immediatly rather which returns
+//copy of the function of the function only : lazy invocation
+//call and apply invocation is eager invocation.
+
+
+function increment() {
+    return this.count++;
+}
+const CounterApp = {
+    count: 0
+}
+const inc = increment.bind(CounterApp)
+
+for (let i = 0; i < 10; i++) {
+    console.log('counter', inc())
+}
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Nested scope and this keyword:
+.............................
+
+Arrow functions and this keyword:
+................................
+
+In general the value of "this" for function is dynamically scoped.
+
+but in 
+
+Arrow function in strict or non-strict mode , the value of this is staticly /lexically
+scoped.
+
+  'use strict'
+
+const training = {
+    firstName: 'Subraamanian',
+    teach: function () {
+        //How to access instance variable 'firstName' inside nested
+        //function
+
+        // way 1 : calling on object directly
+        /**function teachJs() {
+            console.log(`Name ${this.firstName} `);
+        }
+        teachJs.call(training);**/
+
+        //way 2: using self semantic concept : short cut
+        // let self = this;
+        // function teachJs() {
+        //     console.log(`Name ${self.firstName} `);
+        // }
+        // teachJs.call(training);
+        //
+        //let teachJs = () => console.log(`Name ${this.firstName} `);
+        // teachJs();
+        return () => console.log(`Name ${this.firstName} `);
+
+    }
+}
+let teachJs = training.teach();
+teachJs();
+//teachJs.call(training);
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Public scope:
+.............
+
+ All instance variables and methods inside object , has public scope.
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Node JS:
+.......
+
+1.node architecture
+2.Async programming
+/////////////////////////////////////////////////////////////////////////////////////////
+
+                                   Node.js /node
+.............................................................................................
+
+What is node.js?
+
+ Node is javascript runtime to run javascript applications.
+
+ Node is javascript runtime written on google V8 JAVASCRIPT engine.
+
+Histroy behind node?
+
+Ryan Dahl who created Node js in 2007 -2008 .
+
+Why Ryan created node js?
+
+ He wanted to create webserver which supports nonblocking/async webserver
+
+Node is was created to build non-blocking IO applications.
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Blocking and Non blocking:
+..........................
+
+
+Multi threading:
+
+What is thread?
+
+
+ It is sub process , which is running on process.
+ It shares process memory and resources
+ It can exchange data easily.
+ 
+Since it is subprocess, which must have some layout /Structure.
+
+
+How is thread is created?
+
+function sayHello(){
+
+
+}
+sayHello() // pushed into stack---->Stack frame(thread of execution)
+
+
+by calling function and pushing inside stack, becomes live method execution.
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+project setup:
+
+mkdir mynode-apps
+
+cd mynode-apps
+
+mkdir src
+
+
+
+
+while one frame is running, the other frames are "waiting" 
+
+
+How to run multiple frames?
+  Multi threading.
+
+Thread manager runs any one of the frame at same time,remaining frames are passive.
+
+Role of Process:
+
+1.creating multiple threads
+2.running all the threads
+3.managing life cycles of threads.
+
+if process is doing the above job, we call "Process Level Concurrency/Process multi threading"
+
+
+Does Node and javascript support process level multi threading?
+
+  NO!
+
+What is the problem with process level threads?
+
+evils of multi threading:
+...................................
+
+1.dead lock
+2.thread stravation
+3.thread race conditions
+4.resources waste
+5.threads can block itself
+
+
+   "java script is single threaded and node is also single threaded model"
+
+
+What if javascript and node does not support multi threading then how to achive concurrency?
+
+               "Worker-thread Model / Async Programming"
+
+
+
+Types of Concurrency:
+
+1.Process Level Concurrency : this is tradtional , java /c++ follows
+
+2.Worker-Thread level concurrency / Event driven concurrency/ Event loop concurrency /Worker-thread Model / Async Programming
+   - javascript.
+
+1.Process Level Concurrency :
+
+Threads are created  by the process itself
+Threads are executed  by the process itself
+Threads are destroyed by the process itself
+
+
+what is difference between java like env and javascript with respect to multi threading.
+
+javascript uses worker thread model
+   Loose coupling
+   you need not manage all thread drawabacks.
+
+
+java uses process level thread model
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Use case For Process level multi threading and Worker thread Model concurrency:
+////////////////////////////////////////////////////////////////////////////////
+
+
+Web Server:
+.............
+
+JavaWebServer
+
+Client----------------request-----             -thread----reading 1 gb file
+Client----------------request-----  WebServer---thread ---read 1 million db records
+Client----------------request-----             -thread ---read simple json file
+Client----------------request-----             -thread ----read simple html file
+
+ The above cycle,
+ what if a thread is taking longer time to read file lets say 1 gb file.
+   then web server will be blocked : Blocking Mode
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+NonBlocking  /Worker Thread Model:
+
+                                                            OS Kernal threads
+Client----------------request-----                         thread----reading 1 gb file
+Client----------------request-----  |WebServer---|         thread ---read 1 million db records
+Client----------------request-----                         -thread ---read simple json file
+Client----------------request-----                         -thread ----read simple html file
+
+
+Node will offload heavy computation into OS kernal parts
+
+
+How results are returnted to end user:
+
+
+                                          
+                                          Events           OS Kernal threads
+
+Client----------request-----                 <--emit event thread----reading 1 gb file
+Client---------request-----  |WebServer--->| <--emit event thread ---read 1 million db records
+Client---------request-----                                thread ---read simple json file
+Client---------request-----                                thread ----read simple html file
+
+
+once thread has completed its job in the os, it will emit a signal(events) to Node process
+
+
+How events are handled?
+
+                                
+                             Event Queue and Event loop    Events           OS Kernal threads
+
+Client---request-----                             <--emit event thread----reading 1 gb file
+Client---request-----  | WebServer<---Queue|loop  <--emit event thread ---read 1 million db 
+Client-- request-----                                thread ---read simple json file
+Client-- request-----                                thread ----read simple html file
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+Your taks---Node---will offload to OS
+
+OS--return data to node ---events-----event loop---|eventQueue---Stack----->client
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+
+Node js Components:
+
+Node is collection of many libs
+
+ 1.v8
+ 2.libuv
+////////////////////////////////////////////////////////////////////////////////////////////
+
+How to write nonblocking/async programming?
+
+Two setup
+
+
+1.you need high level non blocking api which must have low level non blocking api.
+
+
+function add(){
+
+}
+add()---async api
+
+common non blocking apis:
+
+1.timers
+  settimeout,setinterval
+
+2.IO apis
+   ->fs
+   ->network
+
+
+
+2.You need to pass function  as parameter
+
+   callback or listner , which handles result of async operation.
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Lets code:
+
+Timers:
+
+How write non blocking code?
+
+ in order to write non blocking we have different styles
+
+
+1.callback style
+
+2.Promise style
+
+3.Async await style
 
 
 
 
 
 
+//async api : timers: setTimeout 
 
+//Flow
+/**
+ * setTimeout(cb,1000)
+ *  |
+ *  ---->stack----->V8 takes decision that whether settimemout is sync or async
+ *   |
+ *   Async
+ *    ---------->libuv
+ *                  |
+ *                  -----POST-----to----------OS
+ *      Program control is returned to main Process
+ *  node starts executing next line of code and so on...
+ *    while node is running
+ *             ---emits a signal of completion-----<----------<-------------os
+ *    now libuv event loop starts processing signal(event)
+ *          --->attach signal with callback function which is present in Event
+ *                Queue
+ *     then loop verfies whether stack is empty
+ *           |
+ *           Yes
+ *             -->callback function is pushed, result is returned to main program
+ * 
+ */
+
+function sayHello() {
+    console.log('hello!');
+}
+console.log('start')
+setTimeout(function () {
+    console.log('I am delayed function!')
+}, 1000);
+sayHello();
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//timer versions
+
+//setTimeout(function () { console.log('im delay') }, 1000);
+
+// let handler = function () {
+//     console.log('Hello i delayed');
+// };
+// setTimeout(handler, 1000);
+
+//arrow version
+//setTimeout(() => console.log('Hello iam delayed'), 1000);
+setTimeout(name => console.log(`${name} am delayed`), 1000, 'Subramanian');
+
+//////////////////////////////////////////////////////////////////////////////
+
+const sayGreet = callback => {
+    let name = 'subramanian'
+    //setTimeout(callback, 3000, name);
+    setTimeout(() => {
+        callback(name)
+    }, 1000);
+};
+sayGreet(name => {
+    console.log(`${name} am delayed function!`)
+});
+////////////////////////////////////////////////////////////////////////////////////
+//timer with biz logic : i want to create simple async application with timer
+
+const getUser = (success, failure) => {
+    let user = {
+        id: 1,
+        name: 'admin'
+    }
+    let error = {
+        message: 'User not found',
+        code: 500
+    }
+    //biz logic
+    if (user) {
+        setTimeout(success, 1500, user);
+    } else {
+        setTimeout(failure, 1500, error) //error handling
+    }
+}
+getUser(user => console.log(user), err => console.log(err));
+
+//////////////////////////////////////////////////////////////////////////////////
+
+//what if two settimeout having same timeout :
+//output is based registeration who has registered first
+setTimeout(name => console.log(`${name} am delayed`), 500, 'Subramanian');
+setTimeout(name => console.log(`${name} am delayed`), 500, 'Ram');
+//////////////////////////////////////////////////////////////////////////////
+//can we have 0 ms as timeout , what will happen
+   //0ms is not timer, at least one time it should be processed by event loop.
+setTimeout(name => console.log(`${name} am delayed`), 0, 'Geetha');
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+setinterval:
+  set interval starts ticking  timer based on parameter specified in the api.
+
+
+//set interval
+let counter = 0;
+const handler = () => {
+    counter += 1;
+    console.log(counter)
+}
+console.log('start')
+let timerId = setInterval(handler, 1000);
+
+//Stop the timer after 10000ms
+//setTimeout(clearInterval, 10000, timerId);
+setTimeout(() => clearInterval(timerId), 10000);
+
+console.log('end')
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Callback Patterns;
+...................
+
+1.nested callbacks
+2.callback hell
 
 
 
