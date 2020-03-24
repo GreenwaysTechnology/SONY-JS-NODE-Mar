@@ -2852,22 +2852,1396 @@ console.log('end')
 Callback Patterns;
 ...................
 
+callback/handler : 
+
+ it is function , which will be called after  async operation is completed.
+ it is passed as parameter to another function 
+ It is registered during intializations.
+
 1.nested callbacks
 2.callback hell
 
+Nested Callbacks:
+
+   Callback inside another callback.
+What is use case of nested callback?
+->chaining operation.
+  The outout of one callback, will be input to another callback
 
 
 
+//nested callback.
+//resolve = successhandler
+//reject  =ErrorHandler
+const getUser = (resolve, reject) => {
+    //biz logic
+    let fakeUser = {
+        id: 1,
+        name: 'admin'
+    };
+
+    if (fakeUser) {
+        console.log('Get User is called!');
+        setTimeout(resolve, 1000, fakeUser);
+    } else {
+        setTimeout(reject, 1000, { id: 500, err: 'User not found!' });
+    }
+};
+
+//login
+const login = (user, resolve, reject) => {
+    //biz logic 
+    if (user.name === 'admin') {
+        console.log('Login is called!');
+        setTimeout(resolve, 1000, `login success`);
+    } else {
+        setTimeout(reject, 1000, { id: 500, err: 'Login failed' });
+
+    }
+}
+
+getUser(user => {
+    //output of get User will be input to the login.
+    login(user, status => {
+        console.log(status)
+    }, err => {
+        console.log(err);
+    });
+}, err => {
+    console.log(err);
+})
+///////////////////////////////////////////////////////////////////////////////////////////
+
+Callback Hell:
+
+
+//nested callback.
+//resolve = successhandler
+//reject  =ErrorHandler
+const getUser = (resolve, reject) => {
+    //biz logic
+    let fakeUser = {
+        id: 1,
+        name: 'admin'
+    };
+
+    if (fakeUser) {
+        console.log('Get User is called!');
+        setTimeout(resolve, 1000, fakeUser);
+
+    } else {
+        setTimeout(reject, 1000, { id: 500, err: 'User not found!' });
+    }
+};
+
+//login
+const login = (user, resolve, reject) => {
+    //biz logic 
+    if (user.name === 'admin') {
+        console.log('Login is called!');
+        setTimeout(resolve, 1000, { user, status: 'login Success' });
+    } else {
+        setTimeout(reject, 1000, { id: 500, err: 'Login failed' });
+
+    }
+}
+
+const showControlPanel = (user, resolve, reject) => {
+    //biz logic 
+    if (user.name === 'admin') {
+        console.log('control panel is called is called!');
+        setTimeout(resolve, 1000, `You have landed Control Panel`);
+    } else {
+        setTimeout(reject, 1000, 'You have landed Guest Page');
+
+    }
+}
+
+getUser(user => {
+    //output of get User will be input to the login.
+    login(user, response => {
+        console.log(response.status)
+        showControlPanel(response.user, msg => {
+            console.log(msg)
+        }, guestMessage => {
+            console.log(guestMessage)
+        });
+    }, err => {
+        console.log(err);
+    });
+}, err => {
+    console.log(err);
+})
+
+
+Questions:
+
+1.Whether this code is able to understand quickly
+2.Whether this code is able to debug
+3.Whehter this code is scalable?
+4.whether this code is maintaiable?
+
+"No" : This is what we call as "Callback hell".
 
 
 
+fs.readdir(source, function (err, files) {
+  if (err) {
+    console.log('Error finding files: ' + err)
+  } else {
+    files.forEach(function (filename, fileIndex) {
+      console.log(filename)
+      gm(source + filename).size(function (err, values) {
+        if (err) {
+          console.log('Error identifying file size: ' + err)
+        } else {
+          console.log(filename + ' : ' + values)
+          aspect = (values.width / values.height)
+          widths.forEach(function (width, widthIndex) {
+            height = Math.round(width / aspect)
+            console.log('resizing ' + filename + 'to ' + height + 'x' + height)
+            this.resize(width, height).write(dest + 'w' + width + '_' + filename, function(err) {
+              if (err) console.log('Error writing file: ' + err)
+            })
+          }.bind(this))
+        }
+      })
+    })
+  }
+})
+
+                   "callback is other wise called as doom of pyrbid."
+
+//////////////////////////////////////////////////////////////////////////////////////////
+ 
+How to fix the callback hell? How to write better callback programming? or How to avoid callback hell?
+
+In 2005, JQUERY team started with working complex callback patterns, they found callback
+hell problem.
+
+They proposed a  Design pattern to write better callback programming(Async) programming.
+
+  "promise".
+
+Implementation of "promise" design pattern:
+...........................................
 
 
 
+SInce Promise is design pattern, many people have implemented Promise design pattern.
+
+1.JQuery -first promise implementation
+2.many libs and frameworks
+
+Because of popularity of promise design pattern, ECMA 6 ,ES 6 
+
+IN 2012 ecma Commit introduced "Promise" as Object in javascript.
 
 
+ES 6 "Promise" Object is the reference implementation of "promise" Design pattern.
+
+
+features of Promise Object:
+............................
+
+1.Promise by deafult is Async. Which implements timer api with 0 ms .
+
+Promise can be used with any async implementations.
+
+
+Promise ES 6 implementation:
+
+IN ES 6 promise Object.
+
+Promise object creation:
+
+1.Using factory apis - 
+   Promise.resolve() =>Promise
+   Promise.reject() =>Promise
+2.Using constructors
+   new Promise(parameter)
+
+
+Common Methods in Promise Object:
+
+1.then:
+   Handler method to handle async operation success results.
+2.catch:
+   Handler method to handle async operation error results
+3.finally
+   Handler method is used for clean /completion status method
+
+Advanced Methods
+
+4.all
+5.any
+6.race
+
+
+Basic Promise Object creations:
+..............................
+//Promise Object creations
+
+//Using factory methods
+
+//Only Success
+
+function getInfo() {
+    return Promise.resolve('Info'); //Promise Object
+}
+// console.log('start');
+// let pro = getInfo();
+// //Get Async Result
+// pro.then(res => console.log(res));
+// console.log('end');
+
+//short cut to get Promise : Builder Pattern/CommandChain Pattern.
+
+// getInfo()
+//     .then(res => console.log(res));
+
+getInfo()
+    .then(console.log);
+////////////////////////////////////////////////////////////////////////////////////
+//Only error
+
+function getError() {
+    return Promise.reject('Something went Wrong!!!');
+}
+getError().catch(console.log)
+///////////////////////////////////////////////////////////////////////////////////
+//Promise.resolve and reject 
+
+const getUser = () => {
+    let fakeUser = {
+        id: 1,
+        name: 'admin'
+    };
+    if (fakeUser) {
+        return Promise.resolve(fakeUser);
+    } else {
+        return Promise.reject({ code: 500, err: 'User not Found!!' });
+    }
+};
+getUser()
+    .then(console.log)
+    .catch(console.log)
+    .finally(() => console.log('getUser Async Operation has been done!!!'));
+//////////////////////////////////////////////////////////////////////////////////////////////
+//promise constructors:
+/**
+ * 
+ * Use case cases /When to use Promise:
+ * 
+ * 1.if your application is already in callback based
+ * or
+ * 2.if you want to convert any callback based programming
+ *  into promise Powered
+ * 
+ * Solution is Promise Constructors
+ * 
+ */
+
+//Callback based programmning: timer
+
+//I have tick function which returns async result to the caller
+
+/**function tick(success, failure) {
+
+    let isEnabled = true;
+    if (isEnabled) {
+        setTimeout(success, 1000, 'Server is Started');
+    } else {
+        setTimeout(failure, 1000, 'Server is Failed')
+    }
+}
+
+
+//caller
+function startServer() {
+    tick(status => {
+        console.log(status);
+    }, err => {
+        console.log(err);
+    });
+}
+startServer();
+**/
+//Promise Version
+function tick() {
+    let isEnabled = true;
+    //wrap the code into Promise
+    return new Promise((resolve, reject) => {
+        if (isEnabled) {
+            setTimeout(resolve, 1000, 'Server is Started');
+        } else {
+            setTimeout(reject, 1000, 'Server is Failed')
+        }
+    });
+}
+
+//caller
+function startServer() {
+    tick()
+        .then(console.log)
+        .catch(console.log)
+        .finally(() => console.log('Async Opertion is done!'))
+}
+startServer();
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
+Nested Promises:
+...............
+
+//Promise Chaining :The output of one Promise is Input to another Promise:
+
+//Promise Chaining :The output of one Promise is Input to another Promise:
+
+
+const getUser = () => {
+    let fakeUser = {
+        id: 1,
+        name: 'admin'
+    };
+    if (fakeUser) {
+        return Promise.resolve(fakeUser);
+    } else {
+        return Promise.reject({ code: 500, err: 'User not Found!!' });
+    }
+};
+const login = user => {
+    if (user.name === 'admin') {
+        return Promise.resolve({ user, message: 'Login Success' });
+    } else {
+        return Promise.reject({ code: 500, err: 'Login failed!' });
+    }
+};
+
+function startApp() {
+    // getUser()
+    //     .then(user => {
+    //         console.log('Get User method is called')
+    //         return login(user);
+    //     })
+    //     .then(console.log)
+    //     .catch(console.log)
+    //     .finally(() => {
+    //         console.log('Async Operation is Completed!!!');
+    //     });
+    // getUser()
+    //     .then(user => login(user))
+    //     .then(console.log)
+    //     .catch(console.log)
+    //     .finally(() => {
+    //         console.log('Async Operation is Completed!!!');
+    //     });
+
+    const { log } = console;
+    getUser()
+        .then(login)
+        .then(log)
+        .catch(log)
+        .finally(() => {
+            log('Async Operation is Completed!!!');
+        });
+}
+startApp();
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+Promise Hell:
+.............
+ When we nest so many Promise abstraction which will give use Promise Hell.
+
+
+//Promise Chaining :The output of one Promise is Input to another Promise:
+
+
+const getUser = () => {
+    let fakeUser = {
+        id: 1,
+        name: 'admin'
+    };
+    if (fakeUser) {
+        return Promise.resolve(fakeUser);
+    } else {
+        return Promise.reject({ code: 500, err: 'User not Found!!' });
+    }
+};
+const login = user => {
+    if (user.name === 'admin') {
+        return Promise.resolve(user);
+    } else {
+        return Promise.reject({ code: 500, err: 'Login failed!' });
+    }
+};
+
+const showControlPanel = user => {
+    if (user.name === 'admin') {
+        return Promise.resolve(`You have landed Control Panel`);
+
+    } else {
+        return Promise.reject('You have landed Guest Page');
+    }
+}
+
+function startApp() {
+    // getUser()
+    //     .then(user => {
+    //         console.log('Get User method is called')
+    //         return login(user);
+    //     })
+    //     .then(console.log)
+    //     .catch(console.log)
+    //     .finally(() => {
+    //         console.log('Async Operation is Completed!!!');
+    //     });
+    // getUser()
+    //     .then(user => login(user))
+    //     .then(console.log)
+    //     .catch(console.log)
+    //     .finally(() => {
+    //         console.log('Async Operation is Completed!!!');
+    //     });
+
+    const { log } = console;
+    getUser()
+        .then(login)
+        .then(showControlPanel)
+        .then(log)
+        .catch(log)
+        .finally(() => {
+            log('Async Operation is Completed!!!');
+        });
+}
+startApp();
+/////////////////////////////////////////////////////////////////////////////////////
+
+How to fix Promise Hell?
+
+ES 7 introduced  new Keywords called "async and await keywords".
+
+async is keyword to used in front of functions
+we call as async functions.
+
+
+Features of asyncfunctions:
+
+
+1.async function by default return Promise Object by calling Promise.resolve.
+
+
+//Async functions
+
+async function getInfo() {
+    return 'Info';    //Promise.resolve('Info'); //Promise Object
+}
+//calling async function
+const { log } = console;
+getInfo().then(log);
+
+async function getError() {
+    return Promise.reject('Something went Wrong!!!');
+}
+getError().catch(log)
+//////////////////////////////////////////////////////////////////////////////////
+const getUser = async () => {
+    let fakeUser = {
+        id: 1,
+        name: 'admin'
+    };
+    if (fakeUser) {
+        return fakeUser;
+    } else {
+        return Promise.reject({ code: 500, err: 'User not Found!!' });
+    }
+};
+getUser()
+    .then(log)
+    .catch(log)
+    .finally(() => log('getUser Async Operation has been done!!!'));
+///////////////////////////////////////////////////////////////////////////////
+
+await :
+
+//async ---await
+//await is going to eleminate then calls.
+//await will return result of async operation or may return another promise in nested
+//await keyword tells "sync style of async operation"
+
+//Returns Promise
+function getInfo() {
+    return Promise.resolve('Info');
+}
+function getError() {
+    return Promise.reject('Something went Wrong!!!');
+}
+
+const getUser = async () => {
+    let fakeUser = {
+        id: 1,
+        name: 'admin'
+    };
+    if (fakeUser) {
+        return fakeUser;
+    } else {
+        return Promise.reject({ code: 500, err: 'User not Found!!' });
+    }
+};
+const { log } = console;
+async function getInfoResult() {
+    // getInfo().then(result=>console.log())
+    const result = await getInfo();
+    log(result);
+}
+getInfoResult()
+
+async function getErrorResult() {
+    try {
+        const result = await getError();
+        log(result);
+    } catch (err) {
+        log(err);
+    }
+}
+getErrorResult()
+
+async function getUserResult() {
+    try {
+        const user = await getUser();
+        log(user);
+    } catch (err) {
+        log(err);
+    } finally {
+        console.log('done!')
+    }
+}
+getUserResult();
+///////////////////////////////////////////////////////////////////////////////
+
+//Promise Chaining :The output of one Promise is Input to another Promise:
+
+
+const getUser = () => {
+    let fakeUser = {
+        id: 1,
+        name: 'admin'
+    };
+    if (fakeUser) {
+        return Promise.resolve(fakeUser);
+    } else {
+        return Promise.reject({ code: 500, err: 'User not Found!!' });
+    }
+};
+const login = user => {
+    if (user.name === 'admin') {
+        return Promise.resolve(user);
+    } else {
+        return Promise.reject({ code: 500, err: 'Login failed!' });
+    }
+};
+
+const showControlPanel = user => {
+    if (user.name === 'admin') {
+        return Promise.resolve(`You have landed Control Panel`);
+
+    } else {
+        return Promise.reject('You have landed Guest Page');
+    }
+}
+
+const { log } = console;
+async function startApp() {
+    try {
+        const user = await getUser();
+        await login(user);
+        const ctlPanel = await showControlPanel(user);
+        log(`${user.name} ${ctlPanel}`);
+    }
+    catch (err) {
+        log(err)
+    } finally {
+        log('done!')
+    }
+}
+startApp();
+********************************************************************************************
+
+Javascript Modules and node Modules:
+....................................
+
+What is modularity?
+
+1.how to break app into multiple files
+2.after breaking how to share code among files.
+
+      "Organization of code"
+
+Java:
+Java modularity is based on folder and file structure
+ -Phy modualirty
+ 
+ e:/myapp/src/
+         com/sony/digital/games/Player.java 
+
+Java modularity is based on  packages
+ -logical modularity
+
+ package com.sony.digital.games
+
+ class Player{
+
+ }
+
+Linking :
+
+ import com.sony.digital.games.Palyer;
+
+ class Game {
+   Player player;
+}
+
+Javascript:
+
+javascript modularity is file based
+  index.js
+  <script src="index.js">
+
+logical modularity?
+
+  function() or {} or class ?
+
+Points :
+
+1.js modularity is very very weak   why , js was not created for enterprise computing
+  -large scale programming.
+
+once javascript was  started growing , devs thought how to write modular code?
 
  
+How to solve this issue?
+
+Via module design patterns.
+
+1.Namespace design pattern : which is core design pattern helps to organize code sharing only
+  ->how to encapsulate the code
+ which uses js core concept called "literal object/iife)"
+
+2.AMD 
+  It is first professional design pattern, which talks how to organize the code and how 
+  to link files and how to share code
+
+3.CJS : Common JS
+  It was born from amd and namespace.
+  This design pattern implemented in node js by default.
+ 
+4.ES 6 Module design pattern
+  It was created by ECMA Committe 
+  ES 6  =  namespace + amd + cjs
+
+//////////////
+5.System
+
+6.UMD
+
+It is not used for development but used by tools for build interoperaable.
+///////////////////////////////////////////////////////////////////////////////////////////
+
+The above design patterns only, which talks how to organize code ,how to link files?
+
+Does js engine understand these design patterns?
+
+ No!.
+
+We need module loaders, loaders are spcial javascript lib.
+
+
+Node.js has built in CJS loader, so we can write cjs code directly without any extra loader
+lib.
+
+Node does not support es 6 modules directly, so if want to run e6 modules, we need loader.
+///////////////////////////////////////////////////////////////////////////////////////////
+
+Common JS : cjs:
+.................
+
+cjs recommends three keywords
+
+1.require
+2.exports
+3.module.exports
+
+
+How to link files
+  require is function which is already implemented on node js.
+  require('jsfilepath')
+
+How to share code among files
+ exports
+ module.exports
+
+eg;
+linking files
+
+src/mylib.js
+//how to link
+require('./mylib')
+
+src/index.js
+//how to link
+require('./mylib')
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+How to share code among files?
+
+code :
+
+ variable declaration with any literal
+ function declaration
+ class declaration
+
+sharing code via:
+
+exports
+ 
+1.exports is variable , provided by cjs implemenation.
+  let exports=value?
+2.exports variable is declared inside a function called
+  "require"
+
+
+module.exports
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+
+require Demo:
+
+
+src/lib/mylib.js
+//Code 
+//name and city
+/**
+ * function  require(filePath){
+ *  let exports = {};
+ * 
+ *  exports.name = 'Subramanian'
+ *
+ *
+ *  return exports;
+ * }
+ *
+ */
+exports.name = 'Subramanian'
+exports.city = 'Coimbatore';
+exports.id = 10;
+exports.isActive = true;
+exports.skills = ['javascript', 'Node', 'MicroServices'];
+exports.calculate = function () {
+    return 1000;
+}
+
+
+src/index.js
+//how to link
+// const result = require('./libs/mylib')
+
+// console.log(result);
+
+// console.log(result.name)
+// console.log(result.id);
+// console.log(result.skills);
+// console.log(result.isActive);
+// console.log(result.calculate())
+
+const { name, id, skills, isActive, calculate } = require('./libs/mylib')
+console.log(name)
+console.log(id);
+console.log(skills);
+console.log(isActive);
+console.log(calculate())
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+module.exports;
+
+1.it does not return object like exports
+
+2.code is not packed inside object 
+
+3.What you return, the same thing will be returned
+  if you return variable, it will variable
+  if you retun function , it will function.
+
+4.it does not return multiple things.
+
+
+src/libs/
+
+Customer.js
+
+
+class Customer {
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+module.exports = Customer;
+
+employee.js
+
+
+module.exports = [
+    { id: 1, name: 'A1' },
+    { id: 2, name: 'A2' },
+    { id: 3, name: 'A3' }
+]
+
+greeter.js
+
+
+// function sayGreeter() {
+//     return 'Greet';
+// }
+
+// module.exports = sayGreeter;
+
+module.exports = function () {
+    return 'Greet';
+}
+
+variablereturn.js
+
+
+
+
+//module.exports
+
+/**
+ * function require(filePath){
+ *  let exports = {};
+ *  let module.exports; //undefined
+ * 
+ *  if(!exports)
+ *  {
+ *   module.exports =variable
+ * 
+ *   return variable
+ *   
+ *  }
+ *  return exports
+ * 
+ * }
+ * 
+ * 
+ */
+const name = 'Subramanian';
+
+module.exports = name;
+
+index.js
+
+const firstName = require('./libs/variablereturn');
+const greet = require('./libs/greeter');
+const employees = require('./libs/employees');
+const Customer = require('./libs/Customer');
+
+console.log(firstName)
+console.log(greet());
+console.log(employees)
+let { id, name } = new Customer(1, 'subramanian')
+console.log(id, name);
+////////////////////////////////////////////////////////////////////////////////////////
+
+TodoApp :
+
+const TODOS = require('../mock-data/Todos');
+
+class TodoService {
+    constructor() {
+        console.log('Todo Service is being initalized!!!');
+    }
+    //sync api
+    // findAll(){
+    //     return TODOS
+    // }
+    //async api ; callback pattern
+    // findAll(callback) {
+    //     setTimeout(callback, 1000, TODOS);
+    // }
+    //async api : promise Pattern
+
+    findAll() {
+        return new Promise((resolove, reject) => {
+            setTimeout(resolove, 1000, TODOS);
+        });
+    }
+
+}
+
+module.exports = new TodoService();
+
+
+const { findAll } = require('./services/TodoService');
+
+
+async function fetchAllTodos() {
+    //sync api
+    //findAll().forEach(console.log)
+
+    //async api call : callback pattern
+    //   findAll(todos=>{
+    //       console.log(todos)
+    //   });
+    //async api with promise
+    //findAll().then(console.log);
+    //async api with await 
+    const todos = await findAll();
+    console.log(todos);
+}
+
+fetchAllTodos();
+
+  
+//////////////////////////////////////////////////////////////////////////////////////////
+
+1.Node modules
+
+Types of modules:
+.................
+
+1.custom node module
+  we have discussed
+2.in built  node modules
+3.third party node modules
+
+
+Note : any module , just javascript files, having code.
+
+2.in built  node modules:
+
+ node modules provided by node installation.
+
+
+1.operating system
+
+const {arch,hostname,platform} = require('os')
+
+console.log('Operating System information');
+console.log(arch())
+console.log(hostname())
+console.log(platform())
+
+
+ require('os') vs require('./greeter');
+                     
+without ./ means, node runtime uses env settings to lookup js files automatically
+./ means , lookup js files in the current dir.
+
+
+
+how node look up js files?
+
+node will look up files in this order
+
+  project-folder
+             ---node_modules	
+			---not present
+				 |
+				node installation folder(c drive)
+					|
+					node_modules
+						|
+						 present : load those files
+					else
+					  - throw errors.
+
+
+
+C:\session\sony\mynode-apps>node src/index.js
+internal/modules/cjs/loader.js:800
+    throw err;
+    ^
+
+Error: Cannot find module 'oxxxs'
+Require stack:
+- C:\session\sony\mynode-apps\src\index.js
+[90m    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:797:15)[39m
+[90m    at Function.Module._load (internal/modules/cjs/loader.js:690:27)[39m
+[90m    at Module.require (internal/modules/cjs/loader.js:852:19)[39m
+[90m    at require (internal/modules/cjs/helpers.js:74:18)[39m
+    at Object.<anonymous> (C:\session\sony\mynode-apps\src\index.js:1:34)
+[90m    at Module._compile (internal/modules/cjs/loader.js:959:30)[39m
+[90m    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)[39m
+[90m    at Module.load (internal/modules/cjs/loader.js:815:32)[39m
+[90m    at Function.Module._load (internal/modules/cjs/loader.js:727:14)[39m
+[90m    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: [ [32m'C:\\session\\sony\\mynode-apps\\src\\index.js'[39m ]
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+events:
+
+Much of the Node.js core API is built around an idiomatic asynchronous event-driven architecture in which certain kinds of objects (called "emitters") emit named events that cause Function objects ("listeners") to be called.
+
+Node is event driven architecture.
+Node supports event driven programming
+In node most of the IO apis are powered with events.
+Event driven progam is other wise called pub/sub pattern.
+
+How to create custom event driven programming?
+
+node provides a module called events.
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+Events module provides a class , y create object
+
+EventEmitter Object methods
+
+1.on
+  bind event
+2.emit
+  send event
+
+
+const EventEmitter = require('events');
+
+//create Object 
+const event = new EventEmitter();
+
+//Bind event
+event.on('tick', data => console.log(data));
+
+//emit event:
+event.emit('tick', 'Hey')
+//with timer , lets say i want to emit event after few seconds
+setTimeout(() => event.emit('tick', 'I am late!'), 1000);
+////////////////////////////////////////////////////////////////////////////////
+//Event Emitter with domain objects
+
+class Inventory extends EventEmitter {
+    constructor() {
+        super();
+        this.on('sale', product => console.log(product));
+    }
+    //add biz method
+    update(product) {
+        this.emit('sale', product);
+    }
+}
+//create object
+
+let inv = new Inventory();
+inv.update({ id: 1, name: 'Medicine' });
+///////////////////////////////////////////////////////////////////////////////////////////
+
+IO applications:
+................
+Node is used to build non block io.
+
+ Node initallly desinged for non blocking.
+
+Does node support blocking io?
+  Yes!
+Blocking io is very danagerous.
+  but still node supports, dont unnecessarly use blocking io code in app.
+
+How node supports blocking io?
+  Via "Thread Pools".
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+How to read file through nonblocking way?
+
+
+//non blocking io
+const fs = require('fs');
+
+const filePath = './src/assets/info.txt';
+const options = {
+    encoding: 'utf-8'
+}
+console.log('start')
+fs.readFile(filePath, options, (err, data) => {
+    if (err) throw err;
+    console.log(data);
+});
+console.log('end')
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+FileService app:
+
+const fs = require('fs');
+
+class FileService {
+    constructor() {
+        console.log('File Service api is init')
+    }
+    //biz api
+    read() {
+        const filePath = './src/assets/info.txt';
+        const options = {
+            encoding: 'utf-8'
+        }
+        //Promise Wrapper
+        return new Promise((resolve, reject) => {
+            fs.readFile(filePath, options, (err, data) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(data);
+            });
+        });
+
+
+    }
+}
+
+
+module.exports = new FileService();
+
+index.js
+const { read } = require('./services/FileService');
+
+
+//api
+async function readFile() {
+    try {
+        const fileContent = await read();
+        console.log(fileContent);
+    }
+    catch (err) {
+        console.log(err);
+    }
+    finally {
+        console.log('file operation done!')
+    }
+}
+readFile();
+//////////////////////////////////////////////////////////////////////////////////////////////
+Node Globals:
+
+
+Global Objects:
+...............
+1.process
+2.JS objects-math,date....
+3.exports
+4.module
+
+
+Global Variables:
+
+5.__dirname
+      ->Get current dir path
+6.__filename
+     ->Get current dir + path__filename
+     ->Get current dir + path
+
+
+How to deal with file paths?
+
+ node provides a module called "path"
+
+The path module provides utilities for working with file and directory paths.
+It can be accessed using:
+const path = require('path');
+
+
+const fs = require('fs');
+const path = require('path');
+
+
+class FileService {
+    constructor() {
+        console.log('File Service api is init')
+    }
+    //biz api
+    read() {
+        //const filePath = './src/assets/info.txt';
+        const filePath = path.join(__dirname, '../assets/info.txt')
+        const options = {
+            encoding: 'utf-8'
+        }
+        //Promise Wrapper
+        return new Promise((resolve, reject) => {
+            fs.readFile(filePath, options, (err, data) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(data);
+            });
+        });
+    }
+    write(data) {
+        const filePath = path.join(__dirname, '../assets/details.txt')
+        const options = {
+            encoding: 'utf-8'
+        }
+        return new Promise((resolve, reject) => {
+            fs.writeFile(filePath, data, err => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(`${filePath} Successfully written!`);
+            });
+        });
+    }
+}
+
+
+module.exports = new FileService();
+
+
+const { read, write } = require('./services/FileService');
+
+
+//api
+async function readFile() {
+    try {
+        const fileContent = await read();
+        console.log(fileContent);
+    }
+    catch (err) {
+        console.log(err);
+    }
+    finally {
+        console.log('file read operation done!')
+    }
+}
+async function writeFile() {
+    try {
+        const data = 'Hello How are you!';
+        const status = await write(data);
+        console.log(status);
+    } catch (err) {
+        console.log(`File write error ${err.code}`)
+    }
+    finally {
+        console.log('file write operation done!')
+
+    }
+}
+
+readFile();
+writeFile();
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+const { read, write, writeJSON } = require('./services/FileService');
+const TODOS = require('./mock-data/Todos');
+
+//api
+async function readFile() {
+    try {
+        const fileContent = await read();
+        console.log(fileContent);
+    }
+    catch (err) {
+        console.log(err);
+    }
+    finally {
+        console.log('file read operation done!')
+    }
+}
+async function writeFile() {
+    try {
+        const data = 'Hello How are you!';
+        const status = await write(data);
+        console.log(status);
+    } catch (err) {
+        console.log(`File write error ${err.code}`)
+    }
+    finally {
+        console.log('file write operation done!')
+
+    }
+}
+
+async function writeJsonFile() {
+    try {
+        const status = await writeJSON(TODOS);
+        console.log(status);
+    } catch (err) {
+        console.log(`File write error ${err.code}`)
+    }
+    finally {
+        console.log('file write operation done!')
+
+    }
+}
+
+//readFile();
+//writeFile();
+writeJsonFile();
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Blocking APIS for IO : Blocking IO:
+..................................
+
+fs.readFileSync()
+fs.writeFileSync()
+//blocking IO
+const fs = require('fs');
+const path = require('path');
+
+const options = {
+    encoding: 'utf8'
+}
+const filePath = path.join(__dirname, 'assets/info.txt')
+const writeFilePath = path.join(__dirname, 'assets/info_copy.txt')
+console.log('start')
+const data = fs.readFileSync(filePath, options);
+console.log(data)
+fs.writeFileSync(writeFilePath,'This is demo sync file io');
+
+console.log('end');
+////////////////////////////////////////////////////////////////////////////////////////
+
+Evented IO : Streaming
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

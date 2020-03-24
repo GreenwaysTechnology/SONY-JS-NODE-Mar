@@ -1,16 +1,15 @@
-//set interval
-let counter = 0;
-const handler = () => {
-    counter += 1;
-    console.log(counter)
+//blocking IO
+const fs = require('fs');
+const path = require('path');
+
+const options = {
+    encoding: 'utf8'
 }
+const filePath = path.join(__dirname, 'assets/info.txt')
+const writeFilePath = path.join(__dirname, 'assets/info_copy.txt')
 console.log('start')
-let timerId = setInterval(handler, 1000);
+const data = fs.readFileSync(filePath, options);
+console.log(data)
+fs.writeFileSync(writeFilePath,'This is demo sync file io');
 
-//Stop the timer after 10000ms
-//setTimeout(clearInterval, 10000, timerId);
-
-
-//setTimeout(() => clearInterval(timerId), 10000);
-
-console.log('end')
+console.log('end');
