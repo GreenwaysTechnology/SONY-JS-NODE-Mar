@@ -4212,35 +4212,1253 @@ console.log('end');
 
 Evented IO : Streaming
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Types of io opertions:
+
+These operations are classified based on memory utilization
+
+1.Non Streaming 
+ fs.readFile
+ fs.writeFile  
+
+2.Streaming
+
+
+Use case : how to write big files like 1GB.
+    const fs = require('fs');
+    const path = require('path')
+
+    const filePath = path.join(__dirname, "assets/big.file")
+    const file = fs.createWriteStream(filePath);
+
+    for (let i = 0; i <= 1e6; i++) {
+        file.write('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n');
+    }
+
+    file.end();
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+What is packet?
+
+It is unit of data representation in the network
+
+The big file/data is divided into smallar units, each unit is called as packet.
+
+
+What is chunk?
+
+It is unit of data representation in the node.js
+
+The big files are broken into smaller unit/bytes those units are called chunks.
+
+When and how chunks are chunks are created?
+
+ When you start writing streaming apis to read /write , node will start chunking process.
+
+
+Chunk is called a unit of data.
+
+Streaming apis are powered with events :evented
+
+Events are emitted by os, our program is listener.
+
+Types of Streams:
+
+1.Readable Stream : input
+2.Writeable stream : output
+3.Duplex stream : read + output
+
+Built in readable Streams:
+
+HTTP responses, on the client
+HTTP requests, on the server
+fs read streams
+zlib streams
+crypto streams
+TCP sockets
+child process stdout and stderr
+process.stdin
+
+Writable Streams:
+
+HTTP requests, on the client
+HTTP responses, on the server
+fs write streams
+zlib streams
+crypto streams
+TCP sockets
+child process stdin
+process.stdout, process.stderr
+
+
+
+common events in all io
+
+data event:
+ which is emitted by os, for each chunk.
+
+close event:
+The 'close' event is emitted when the stream and any of its underlying resources (a file descriptor, for example) have been closed.
+
+end event:
+The 'end' event is emitted when there is no more data to be consumed from the stream.
+
+Event: 'error'
+ The 'error' event may be emitted by a Readable implementation at any time
+Typically, this may occur if the underlying stream is unable to generate data due to an underlying internal failure, or when a stream implementation attempts to push an invalid chunk of data.
+
+
+const fs = require('fs');
+const path = require('path')
+const filePath = path.join(__dirname, 'assets/big.file')
+const options = {
+    encoding: 'utf-8'
+}
+
+//create read stream
+
+const inputstream = fs.createReadStream(filePath, options);
+
+//add events 
+
+let data = '';
+inputstream.on('data', (chunk) => {
+    console.log(`chunk ${chunk.length} length`)
+     console.log(chunk)
+    //data += chunk;
+});
+inputstream.on('end', () => {
+    console.log(`stream end event is called`)
+   // console.log(data);
+});
+inputstream.on('close', (chunk) => {
+    console.log(`Stream close event is called`)
+});
+inputstream.on('error', (err) => {
+    console.log(`${err}`)
+});
+
+
+const fs = require('fs');
+const path = require('path');
+
+const fileName = path.join(__dirname, 'assets/grains.txt');
+
+const config = {
+    encoding: 'utf8',
+    flag: 'w'
+};
+const grains = ['wheat', 'rice', 'oats'];
+
+const outputStream = fs.createWriteStream(fileName, config);
+
+while (grains.length) {
+    let data = grains.pop() + " ";
+    outputStream.write(data);
+    console.log("Wrote: %s", data);
+}
+outputStream.close();
+
+outputStream.on('close', function () {
+    console.log('file write operation is completed')
+});
+outputStream.on('open', function () {
+    console.log('file is opened for write')
+});
+
+outputStream.on('ready', function () {
+    console.log('file write operation is ready!')
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Reading from one file and writting into another file:
+....................................................
+
+//read + write 
+const fs = require('fs');
+const path = require('path');
+
+const config = {
+    encoding: 'UTF-8'
+}
+const inputFileName = path.join(__dirname, 'assets/info.txt');
+const outputFileName = path.join(__dirname, 'assets/greeter.txt');
+
+//Streams 
+const inputStream = fs.createReadStream(inputFileName, config);
+const outputStream = fs.createWriteStream(outputFileName, config);
+
+//Register data event.
+inputStream.on('data', function (chunk) {
+    console.log(`Received ${chunk.length} bytes of data.`);
+    outputStream.write(chunk);
+});
+
+
+//end event
+inputStream.on('end', function () {
+    console.log('There will be no more data to read!');
+    outputStream.close();
+})
+
+//error event: for error handling
+inputStream.on('error', function (err) {
+    console.log(`Some thing went wrong! ${err}`)
+});
+
+outputStream.on('close', function () {
+    console.log(`File write operation is completed`);
+});
+//////////////////////////////////////////////////////////////////////////////////////////
+
+Problems with read and write together:
+
+Use case :
+
+what if i read data from the disk, write into network sockets.
+
+What if i read data from the disk , write into disk file
+
+what is if read data from socket and write into another socket.
+
+
+Back Pressure     
+
+1. In general read operation is faster than write operation
+
+Back Pressure means inputstream is fast, outputstream slow, then data will be
+lost.
+
+
+
+Handling back pressure:
+.......................
+"Pause" Input stream if the Node Process memory is full(Buffer),
+resume if buffer/process memory is empty.
+
+
+Apis for handling back pressure:
+
+stream.pause() if stream is full
+else
+stream.resume() if stream is drain
+
+event:
+
+'drain':
+
+
+const fs = require('fs');
+const path = require('path');
+
+const inputfileName = path.join(__dirname, 'assets/big.file');
+const outputfileName = path.join(__dirname, 'assets/big_copy.file');
+
+const config = {
+    encoding: 'UTF-8'
+}
+
+const readerStream = fs.createReadStream(inputfileName, config);
+const writeStr = fs.createWriteStream(outputfileName, config);
+
+
+//Back pressure handling
+/**
+ * with pause and resume
+ * drain event
+ */
+readerStream.on('data', function (chunk) {
+    console.log(`Received ${chunk.length} bytes of data.`);
+    let buffer_good = writeStr.write(chunk);
+    //close the inputstream if buffer is full!
+    if (!buffer_good) readerStream.pause();
+});
+
+writeStr.on('drain', function () {
+    console.log('buffer drained!');
+    //open the inputstream if buffer is empty
+    readerStream.resume();
+});
+
+readerStream.on('end', function () {
+    //console.log(data);
+});
+
+readerStream.on('error', function (err) {
+    console.log(err.stack);
+});
+////////////////////////////////////////////////////////////////////////////////////////////
+The above handles back pressure what if i want to write simple way with back pressure.
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+Back Pressure can be simplified using one simple api : pipe
+
+pipe : enabled with backpressure
+
+syntax:
+ 
+readstream.pipe(writestream)
+
+
+const fs = require('fs');
+const path = require('path');
+
+const inputfileName = path.join(__dirname, 'assets/big.file');
+const outputfileName = path.join(__dirname, 'assets/big_copy.file');
+
+const config = {
+    encoding: 'UTF-8'
+}
+
+//Back pressure handling
+const readerStream = fs.createReadStream(inputfileName, config);
+const writeStr = fs.createWriteStream(outputfileName, config);
+
+//backPressure streams
+//pipe method is simplest method which wraps resume,pasuse,drain 
+readerStream.pipe(writeStr);
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+What if i want to read file and compress the same and write another file?
+
+Node provides another module 'zlib' module for compression in non blocking way.
+
+
+const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
+
+const inputfileName = path.join(__dirname, 'assets/big.file');
+const outputfileName = path.join(__dirname, 'assets/bigfile.gz');
+const config = {
+    encoding: 'UTF-8'
+}
+//create zGzip alogrthim
+const gzip = zlib.createGzip();
+
+const inputstream = fs.createReadStream(inputfileName, config);
+const outputstream = fs.createWriteStream(outputfileName, config);
+
+//compressing
+inputstream.pipe(gzip).pipe(outputstream)
+///////////////////////////////////////////////////////////////////////////////////////////
+
+In the above code , there is problems
+
+   we use pipe to get the data source from one end to the other.
+   How ever we have not attached proper error handler.
+
+   if a chunk of data were to fail to be properly received, the Readable source or 
+   gzip stream will be not be destoryed.  : which will cause memory leaks
+
+How to manage this sequence of streaming?
+
+  There is method in the "stream" module called  pipeline method   
+
+
+
+const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
+const { pipeline } = require('stream');
+
+const inputfileName = path.join(__dirname, 'assets/big.file');
+const outputfileName = path.join(__dirname, 'assets/bigfile.gz');
+const config = {
+    encoding: 'UTF-8'
+}
+
+//pipline method takes parameter
+
+pipeline(
+    fs.createReadStream(inputfileName, config),
+    zlib.createGzip(),
+    fs.createWriteStream(outputfileName, config),
+    err => {
+        if (err) {
+            console.log(`pipeline failed ${err}`)
+        }
+        console.log(`Pipeline succeeded!`);
+    }
+);
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Pipline with Promises:
+
+const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
+const util = require('util');
+const stream = require('stream');
+//promise pipe line
+
+//convert stream.pipeline method with promise powered
+const pipeline = util.promisify(stream.pipeline);
+
+const inputfileName = path.join(__dirname, 'assets/big.file');
+const outputfileName = path.join(__dirname, 'assets/bigfile.gz');
+const config = {
+    encoding: 'UTF-8'
+}
+
+//async function
+async function startApp() {
+    try {
+
+        await pipeline(
+            fs.createReadStream(inputfileName, config),
+            zlib.createGzip(),
+            fs.createWriteStream(outputfileName, config)
+        );
+        console.log(`Pipeline succeeded!`);
+    }
+    catch (err) {
+        console.log(err);
+    }
+    finally {
+        console.log('done!')
+    }
+}
+startApp();
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+Web Module:
+...........
+
+Networking:
+..........
+
+HTTP Programming :
+
+Node provides http wrapper in non blocking way.
+
+node handles client request as a separte kernal thread rather process level.
+
+node provides http and https module.
+
+HTTP api overview:
+..................
+
+http.Agent : 
+  Which is client api, client programs itself we can write in node.
+
+http.ClientRequest
+  Object which represents InputStream of http.
+
+http.ServerResonse
+  Object which represents Outputstream of http
+
+http.Server
+  Object which represents http socket.
+
+http.IncomingMessage
+  Object which represents data flow over in the http channel.
+
+http methods
+
+ 1.createServer method
+    which is used to create socket object.
+ 
+
+
+Note;
+
+ HTTP is evented , streaming Object.
+ HTTP has no  blocking version
+  
+Each object in http has its own events.
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+1.we create web application
+2.we create web server
+3.we deploy the web app on web server.
 
 
 
 
 
 
+const http = require('http');
+const port = 3001;
+
+
+const server = http.createServer((req, res) => {
+
+
+    res.write('<h1>Hello</h1>');
+
+    //response events
+    res.on('finish', () => console.log('response finished'))
+    res.on('close', () => console.log('Close event is called'))
+
+    res.end();
+});
+
+//start the server
+server.listen(port, () => {
+    console.log(`Server is started!`);
+});
+
+//server events
+server.on('request', (req, res) => {
+    //console.log(req);
+    console.log(`Path  ${req.url} Method ${req.method}`)
+});
+////////////////////////////////////////////////////////////////////////////////////////////
+
+How to read data which is submitted by clients?
+
+req.on('data')
+
+
+const http = require('http');
+const port = 3001;
+
+
+const server = http.createServer((req, res) => {
+
+    //reading data from the client
+    let data = ''
+    req.on('data', chunk => {
+        console.log(chunk.toString());
+        data += chunk
+    });
+    //sending data to client which is received : eco
+    req.on('end', () => {
+        res.write(data);
+        res.end();
+    });
+    //response events
+    res.on('finish', () => console.log('response finished'))
+    res.on('close', () => console.log('Close event is called'))
+
+});
+
+//start the server
+server.listen(port, () => {
+    console.log(`Server is started!`);
+});
+
+//server events
+server.on('request', (req, res) => {
+    //console.log(req);
+    console.log(`Path  ${req.url} Method ${req.method}`)
+});
+//////////////////////////////////////////////////////////////////////////////////////////
+
+How to send JSON to clients?
+
+HTTP headers:
+
+-Request headers
+-Response headers
+
+const http = require('http');
+const TODOS = require('./mock-data/Todos');
+
+
+const port = 3001;
+
+
+const server = http.createServer((req, res) => {
+
+    //set response header
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.write(JSON.stringify(TODOS));
+    res.end();
+    //response events
+    res.on('finish', () => console.log('response finished'))
+    res.on('close', () => console.log('Close event is called'))
+
+});
+
+//start the server
+server.listen(port, () => {
+    console.log(`Server is started!`);
+});
+
+//server events
+server.on('request', (req, res) => {
+    //console.log(req);
+    console.log(`Path  ${req.url} Method ${req.method}`)
+});
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+How to send text file to clients?
+
+->read text file from the disk and you have to write into http response.
 
 
 
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const port = 3001;
+
+//Read disk file and send to clients
+
+//const filePath = path.join(__dirname, 'assets/big.file')
+const filePath = path.join(__dirname, 'assets/info.txt')
+
+const options = {
+    encoding: 'utf-8'
+}
+
+const inputstream = fs.createReadStream(filePath, options);
+
+const server = http.createServer((req, res) => {
+
+    //read file using no streaming api
+    /**fs.readFile(filePath, options, (err, data) => {
+        if (err) {
+            reject(err);
+        }
+        res.write(data);
+        res.end();
+    });
+    **/
+    //read file using streaming api with back pressure:pipe
+    inputstream.pipe(res);
+    inputstream.on('end', function () {
+        console.log('Streaming is over')
+        res.end()
+    });
+
+    //response events
+    res.on('finish', () => console.log('response finished'))
+    res.on('close', () => console.log('Close event is called'))
+
+});
+
+//start the server
+server.listen(port, () => {
+    console.log(`Server is started!`);
+});
+
+//server events
+server.on('request', (req, res) => {
+    //console.log(req);
+    console.log(`Path  ${req.url} Method ${req.method}`)
+});
+//////////////////////////////////////////////////////////////////////////////////////////
+
+Third Party Modules
+
+built in modules only provide low level abstraction, if you want to build real time 
+applications, built in modules may not be in sufficient.
+
+Third party modules :
+  it is node module only but which is published /shared in common location
+https://www.npmjs.com/
+
+we call node repository server.
+
+how to pull node modules from the npmjs.com
+
+ we use NPM, node package manager , it is tool , used to publish,pull, manage node application.
+
+Npm : 
+
+which is distributed along with node distributions.
+
+$npm --version
+
+
+$npm commandName
+
+Usage: npm <command>
+
+where <command> is one of:
+    access, adduser, audit, bin, bugs, c, cache, ci, cit,
+    clean-install, clean-install-test, completion, config,
+    create, ddp, dedupe, deprecate, dist-tag, docs, doctor,
+    edit, explore, fund, get, help, help-search, hook, i, init,
+    install, install-ci-test, install-test, it, link, list, ln,
+    login, logout, ls, org, outdated, owner, pack, ping, prefix,
+    profile, prune, publish, rb, rebuild, repo, restart, root,
+    run, run-script, s, se, search, set, shrinkwrap, star,
+    stars, start, stop, t, team, test, token, tst, un,
+    uninstall, unpublish, unstar, up, update, v, version, view,
+    whoami
+
+npm <command> -h  quick help on <command>
+npm -l            display full usage info
+npm help <term>   search for help on <term>
+npm help npm      involved overview
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+According to npm, node project must have some files
+
+package.json
+ it is meta file, project configuration file.
+
+when you start node project, first you need to create package.json file.
+
+
+Create package.json file:
+
+>npm init
+
+package.json
+{
+  "name": "mynode-apps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Subramanian Murugan",
+  "license": "ISC"
+}
+////////////////////////////////////////////////////////////////////////////////////////
+
+How to install third party modules?
+
+eg: express,react,angular,jquery...........
+
+
+basic npm commands
+
+1.how to install node modules?
+
+$npm install /i  node module options
+
+options
+ --save
+ --save-dev
+ -g
+
+eg:
+
+where to keep node modules(third party modules)
+
+node_modules
+   
+
+installing common lodash module:
+
+npm i --save lodash
+
+
+options overview
+
+software develoment
+
+1.dev && production
+
+--save
+  -libs are used for development and production
+
+who will verify that files are only dev and production?
+  "Build tools" : webpack,rollup....
+
+How build tools isloate the files for production 
+
+by scanning 
+package.json file entry
+ "dependencies": {
+    "lodash": "^4.17.15"
+  }
+Here lodash is used for dev and also production.
+***************************************************************************
+
+src/index.js
+const _ = require('lodash/array');
+
+const array = [1, 2, 3];
+console.log(_.fill(array, 'aaaa'));
+
+How to uninstall?
+
+>npm uninstall jquery --save
+
+2.testing
+
+npm install chai --save-dev
+
+ "devDependencies": {
+    "chai": "^4.2.0"
+  }
+3.tools
+  Those files only used for testing and also for dev only.
+  --save-dev
+///////////////////////////////////////////////////////////////////////////////////
+
+Global modules :  -g
+.....................
+
+modules are installed in the global location.
+
+Objectives:
+Gobal modules are tools
+
+Tools:
+1.webservers,compilers,test runners,build tools,packaging tools...............
+
+global modules are installed in
+" C:\Users\sasub\AppData\Roaming\npm\node_modules\mocha\bin\mocha"
+
+npm i mocha -g
+
+
+>mocha --help
+
+Setup testing env:
+.................
+
+$npm i mocha -g
+
+mkdir test
+
+cd test/hello.spec.js
+var assert = require('assert');
+describe('Array', function () {
+    describe('#indexOf()', function () {
+        it('should return -1 when the value is not present', function () {
+            assert.equal([1, 2, 3].indexOf(4), -1);
+        });
+    });
+});
+//////////////////////////////////////////////////////////////////////////////////////////
+
+Drawbacks of global modules:
+...........................
+
+1.what if a project uses different versions of global modules.
+  any one project will fail.
+
+how to create multi projects on single without conflict.
+
+Project-1 ----mocha 1.2
+
+Project-2 -----mocha 1.4
+
+dont install mocha as global module then ?
+
+  install moch as "dev" module : only develpment
+
+Steps:
+
+1.install mocha project specific  ; deve module
+  npm install mocha --save-dev
+
+Note: if you have installed any tools as dev dependency, you cant run directly
+
+scripts:
+.......
+
+scripts section in package.json is used for project automation like python.
+
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+
+contains key -value pair
+
+key : script command Name
+
+value : task to be executed..
+
+
+script commands:
+
+npm provides lot of built in commands
+
+1.start
+2.test
+3.postinstall,preinstall
+ etc..........refer script document
+
+How to execute npm script,how to start automation?
+
+$ npm commandname
+$ npm test
+
+how to use "start" command ?
+
+ start cmd is used to run some programs
+
+how to run node programs through npm
+
+"scripts": {
+       "start": "node src/index.js"
+  },
+
+can i have custom commands?
+
+ Yes!
+
+"scripts": {
+       "subu": "node src/index.js"
+  }
+
+how to execute custom commands
+
+$npm run commandName
+npm run subu
+
+
+{
+  "name": "mynode-apps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node src/index.js",
+    "subu": "node src/index.js"
+  },
+  "author": "Subramanian Murugan",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^7.1.1"
+  }
+}
+/////////////////////////////////////////////////////////////////////////////////////////
+
+How to build enterpris web application?
+
+There is framework called express.js
+
+Use express:
+
+1.RESTFULL webservices
+2.Dynamic webapplications
+
+Express Application setup:
+
+1.Using express lib
+
+2.Using express cli : global module
 
 
 
+1.Using express lib :
+
+$npm i express --save
 
 
+const express = require('express');
+const TODOS = require('./mock-data/Todos');
+
+const port = 3001;
+
+//create object : Application
+//express is wrapper for http module
+const app = express();
+
+//REST End points;
+///api/todos
+app.get("/api/todos", (req, res) => {
+    res.json(TODOS);
+});
+
+app.listen(port, () => console.log('Express server is Ready!'));
+////////////////////////////////////////////////////////////////////////////////////////////
+
+How to modularize api design?
+
+pyscial modularity:
+
+ src
+   routers
+       todorouter.js
+       booksrouter.js
 
 
+src/routers/todorouter.js
+//creating routers
+const express = require('express');
+const TODOS = require('../mock-data/Todos');
 
 
+const todoRouter = express.Router()
+
+todoRouter.get("/list", (req, res) => {
+    res.json(TODOS);
+});
+todoRouter.post("/", (req, res) => {
+    res.json({ message: 'POST' });
+});
+todoRouter.put("/", (req, res) => {
+    res.json({ message: 'update' });
+});
+todoRouter.delete("/", (req, res) => {
+    res.json({ message: 'delete' });
+});
+
+module.exports = todoRouter;
+
+src/routers/booksrouter.js
+
+//creating routers
+const express = require('express');
+const TODOS = require('../mock-data/Todos');
 
 
+const booksRouter = express.Router()
+
+//books
+booksRouter.get("/list", (req, res) => {
+    res.json({ message: 'books  - GET' });
+});
+booksRouter.post("/", (req, res) => {
+    res.json({ message: 'books -POST' });
+});
+booksRouter.put("/", (req, res) => {
+    res.json({ message: 'books-update' });
+});
+booksRouter.delete("/", (req, res) => {
+    res.json({ message: 'books-delete' });
+});
+module.exports = booksRouter;
 
 
+src/index.js
+	
+const express = require('express');
+const todorouter = require('./routers/todorouter');
+const booksrouter = require('./routers/booksrouter');
+
+const port = 3001;
+
+//create object : Application
+//express is wrapper for http module
+const app = express();
+
+//bind routers with main app
+app.use('/api/todos',todorouter);
+app.use('/api/books',booksrouter);
+
+app.listen(port, () => console.log('Express server is Ready!'));
 
 
+///////////////////////////////////////////////////////////////////////////////////////
+
+How to stream videos?
+
+->nodejs streaming apis
+->HTML 5 video tag, JQuery client.
 
 
+Streams:
+
+We are going to send video content chunk by chunk.
 
 
+//video streaming 
+const express = require('express')
+const fs = require('fs')
+const path = require('path')
 
+const port = 3001;
+
+const app = express()
+
+app.get('/', function (req, res) {
+    //sending static html file to the browser
+    res.sendFile(path.join(__dirname + '/index.html'))
+})
+
+app.get('/video', function (req, res) {
+    console.log('/video')
+    const path = './src/assets/sample.mp4'
+    const stat = fs.statSync(path)
+    const fileSize = stat.size
+    const range = req.headers.range
+
+    if (range) {
+        const parts = range.replace(/bytes=/, "").split("-")
+        const start = parseInt(parts[0], 10)
+        const end = parts[1]
+            ? parseInt(parts[1], 10)
+            : fileSize - 1
+
+        if (start >= fileSize) {
+            res.status(416).send('Requested range not satisfiable\n' + start + ' >= ' + fileSize);
+            return
+        }
+
+        const chunksize = (end - start) + 1
+        const file = fs.createReadStream(path, { start, end })
+        const head = {
+            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunksize,
+            'Content-Type': 'video/mp4',
+        }
+
+        res.writeHead(206, head)
+        file.pipe(res)
+    } else {
+        const head = {
+            'Content-Length': fileSize,
+            'Content-Type': 'video/mp4',
+        }
+        res.writeHead(200, head)
+        fs.createReadStream(path).pipe(res)
+    }
+})
+app.listen(port, () => {
+    console.log('Video Streaming Server Ready!!')
+});
+///////////////////////////////////////////////////////////////////////////////////////////
+
+Websocket:
+
+Websocket protocal , is used to build realtime streaming applications.
+
+Websocket is connection oriented protocal.
+
+
+Node supports websocket, so many node modules are available for web socket.
+
+
+socket.io:
+..........
+
+req:
+
+1.express
+2.socket.io
+
+
+socket.io api:
+
+Server side
+
+
+Client side api
+
+
+//live chat application using socket.io
+
+const app = require('express')();
+const http = require('http').createServer(app);
+//http is application transport for websocket
+const io = require('socket.io')(http);
+
+//connect with socket
+io.on('connection', function (socket) {
+    console.log('a user connected');
+    //send data over socket
+    socket.on('chat message', function (msg) {
+        console.log('message: ' + msg);
+        io.emit('chat message', msg);
+    });
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
+
+});
+
+
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/index.html');
+});
+http.listen(3000, function () {
+    console.log('listening on *:3000');
+});
+
+<!doctype html>
+<html>
+
+<head>
+  <title>Socket.IO chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font: 13px Helvetica, Arial;
+    }
+
+    form {
+      background: #000;
+      padding: 3px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    form input {
+      border: 0;
+      padding: 10px;
+      width: 90%;
+      margin-right: .5%;
+    }
+
+    form button {
+      width: 9%;
+      background: rgb(130, 224, 255);
+      border: none;
+      padding: 10px;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #messages li {
+      padding: 5px 10px;
+    }
+
+    #messages li:nth-child(odd) {
+      background: #eee;
+    }
+
+    h1 {
+      text-align: center;
+      background-color: coral;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
+  <script>
+    $(function () {
+      //client socket
+      var socket = io();
+      $('form').submit(function (e) {
+        e.preventDefault(); // prevents page reloading
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+      socket.on('chat message', function (msg) {
+        $('#messages').append($('<li>').text(msg));
+      });
+    });
+  </script>
+  <h1>Covid-19 Support App</h1>
+  <ul id="messages"></ul>
+  <form action="">
+    <input id="m" autocomplete="off" /><button>Send</button>
+  </form>
+</body>
+
+</html>
+***************************Thanks for joining***********************************************
 
 
 

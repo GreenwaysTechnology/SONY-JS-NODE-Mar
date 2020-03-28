@@ -1,15 +1,28 @@
-//blocking IO
-const fs = require('fs');
-const path = require('path');
+//live chat application using socket.io
 
-const options = {
-    encoding: 'utf8'
-}
-const filePath = path.join(__dirname, 'assets/info.txt')
-const writeFilePath = path.join(__dirname, 'assets/info_copy.txt')
-console.log('start')
-const data = fs.readFileSync(filePath, options);
-console.log(data)
-fs.writeFileSync(writeFilePath,'This is demo sync file io');
+const app = require('express')();
+const http = require('http').createServer(app);
+//http is application transport for websocket
+const io = require('socket.io')(http);
 
-console.log('end');
+//connect with socket
+io.on('connection', function (socket) {
+    console.log('a user connected');
+    //send data over socket
+    socket.on('chat message', function (msg) {
+        console.log('message: ' + msg);
+        io.emit('chat message', msg);
+    });
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
+
+});
+
+
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/index.html');
+});
+http.listen(3000, function () {
+    console.log('listening on *:3000');
+});
